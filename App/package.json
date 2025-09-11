@@ -1,0 +1,29 @@
+{
+  "name": "x-generator",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www",
+    "devstart": "nodemon ./bin/www",
+    "serverstart": "SET DEBUG=express-x-generator:* & npm run devstart"
+  },
+  "dependencies": {
+    "@sequelize/sqlite3": "^7.0.0-alpha.45",
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.1",
+    "express-async-handler": "^1.2.0",
+    "express-validator": "^7.2.1",
+    "http-errors": "~1.6.3",
+    "mongoose": "^8.8.0",
+    "morgan": "~1.9.1",
+    "mysql2": "^3.11.4",
+    "pug": "^2.0.4",
+    "sequelize": "^6.37.5"
+  },
+  "devDependencies": {
+    "@faker-js/faker": "^9.0.3",
+    "nodemon": "^3.1.7"
+  }
+}

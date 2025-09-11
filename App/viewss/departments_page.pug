@@ -1,0 +1,20 @@
+extends homeLayout 
+block homeMain 
+     .departmentsContainer  
+        if departmentList && departmentList.length > 0
+            .departments
+                ul 
+                    each department in departmentList 
+                        .departmentInstance
+                            li
+                                button(type="button") 
+                                    a(href=`${department.url}/display`) #{department.name}
+
+            label(for="name") Create a department: 
+                button(type="button") 
+                    a(href="/department/create") Create A department
+        else
+            p No department to select from 
+            a(href="/department/create") 
+                button Create A department
+               

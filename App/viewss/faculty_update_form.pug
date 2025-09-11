@@ -1,0 +1,26 @@
+extends homeLayout 
+block homeMain 
+    - const DeanList = [{name: "okeke",id:7},{name: "nwankwor",id: 6},{name:"philip",id:11}]
+    h1 Faculty update form
+    form(method= "post",action = `/faculty/${faculty.id}/update`,id='form')
+        .nameBlock  
+                
+            label(for="facultyName") name 
+            input(type="text", name="name",placeholder="--faculty name--",
+            required,value= faculty && faculty.name,id="facultyName")  
+        
+        .errorField
+                label(for="name_error_message") 
+                input(type="text", name="name_error_message",
+                    id = "name_error_message",hidden= !isErrorInName,
+                    disabled, value= faculty && faculty.nameError)
+ 
+        .deanBlock 
+            button
+                a(href="") Add Dean 
+            button
+                a(href="") Remove Dean 
+        
+    input(type="submit",form = "form",value='Update faculty') 
+    button 
+        a(href= '/faculty')  Cancil faculty update

@@ -1,0 +1,32 @@
+extends homeLayout 
+block homeMain 
+    if (faculty)
+        .facultyPage 
+            .mainblock
+                h2.header Header
+                .profilePicture
+                    img(src="", alt="Profile picture", sizes="200px")  
+                .card 
+                    ul
+                        each  value, name in faculty 
+                            li 
+                                .infoUnit
+                                    p
+                                        strong.name  #{`${name}:  `}
+                                        span.value  #{value}
+
+            .sideblock
+                .infoUnit
+                    p
+                        strong.name  faculty:  
+                        span.value  
+                            a(href= `${faculty.url}/display`) #{faculty.name} 
+
+                .editblock 
+                    .deleteblock 
+                        button.delete_btn
+                            a(href= `${url}/delete`) Delete faculty                    
+
+                    .updateblock
+                        button.update_btn
+                            a(href= `${url}/update`) Update faculty 

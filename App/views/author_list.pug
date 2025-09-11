@@ -1,0 +1,13 @@
+extend layout 
+
+block content 
+    h1= title 
+
+    if author_list.length 
+        ul 
+            each author in author_list 
+                li 
+                    a(href = author.url) #{author.fullName}     
+                    | (#{author.dateOfBirth}) - #{author.firstName}
+    else 
+        p There in no authors

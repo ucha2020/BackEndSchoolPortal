@@ -1,0 +1,51 @@
+extends homeLayout 
+block homeMain 
+    if lecturer.option == "create"
+        h1 This name choosen for this lecturer creation already existed in the database
+    else
+         h1 This name choosen for this lecturer update already existed in the database
+   
+    form(method="post",hidden,action = '/lecturer/'+ lecturer.option + '_edit',id='form')
+       
+        .firstNameBlock  
+                
+            label(for="lecturer_firstName") firstName: 
+            input(type="text", name="firstName",placeholder="firstName",id="lecturer_firstName",
+                value= lecturer && lecturer.firstName)
+
+        .lastNameBlock  
+                
+            label(for="lecturer_lastName") lastName: 
+            input(type="text", name="lastName",placeholder="lastName",id='lecturer_lastName',
+                value= lecturer && lecturer.lastName)
+
+        .genderBlock  
+                
+            label(for="lecturer_gender")  gender: 
+            input(type="text", name="gender",placeholder=" gender",id="lecturer_gender",
+                value= lecturer && lecturer.gender)
+
+        .nameBlock  
+                
+            label(for="lecturer_dateOfBirth")  dateOfBirth: 
+            input(type="text", name="dateOfBirth",placeholder="dateOfBirth",id="lecturer_dateOfBirth",
+                value= lecturer && lecturer.dateOfBirth)
+
+        .dateOfEnmploymentBlock  
+                
+            label(for="lecturer_dateOfEmployment") dateOfEmployment: 
+            input(type="text", name="dateOfEmployment",placeholder="dateOfEmployment",
+            id="lecturer_dateOfEmployment",value= lecturer && lecturer.dateOfEmployment)
+
+        .departmentIdBlock  
+            if departmentList && departmentList.length > 0
+                label(for="lecturer_departmentId") Select a department
+                select(name="departmentId",required,id="lecturer_departmentId") 
+                    option(value="")  --Select a faculty-
+                        each department in departmentList 
+                            li 
+                                option(value= department.id,selected = department.selected) #{department.name}
+                
+    button(form='form')  continue with lecturer #{lecturer.option == 'create'? "creation": "update"}
+    button 
+        a(href= '/lecturer  `')  Cancil lecturer #{lecturer.option == 'create'? "creation": "update"}

@@ -1,0 +1,48 @@
+extends homeLayout 
+block homeMain 
+
+    form(method ="post",id='form',action = `/lecturer/${lecturer.id}/update`)
+        
+        h2 Lecturer Creation
+        .firstNameBlock  
+                
+            label(for="lecturer_firstName") firstName: 
+            input(type="text", name="firstName",placeholder="firstName",id="lecturer_firstName",
+                value= lecturer && lecturer.firstName)
+
+        .lastNameBlock  
+                
+            label(for="lecturer_lastName") lastName: 
+            input(type="text", name="lastName",placeholder="lastName",id='lecturer_lastName',
+                value= lecturer && lecturer.lastName)
+
+        .genderBlock  
+                
+            label(for="lecturer_gender")  gender: 
+            input(type="text", name="gender",placeholder=" gender",id="lecturer_gender",
+                value= lecturer && lecturer.gender)
+
+        .nameBlock  
+                
+            label(for="lecturer_dateOfBirth")  dateOfBirth: 
+            input(type="text", name="dateOfBirth",placeholder="dateOfBirth",id="lecturer_dateOfBirth",
+                value= lecturer && lecturer.dateOfBirth)
+
+        .dateOfEnmploymentBlock  
+                
+            label(for="lecturer_dateOfEmployment") dateOfEmployment: 
+            input(type="text", name="dateOfEmployment",placeholder="dateOfEmployment",
+            id="lecturer_dateOfEmployment",value= lecturer && lecturer.dateOfEmployment)
+
+        .departmentIdBlock  
+            if departmentList && departmentList.length > 0
+                label(for="lecturer_departmentId") Select a department
+                select(name="departmentId",required,id="lecturer_departmentId") 
+                    option(value="")  --Select a faculty-
+                        each department in departmentList 
+                            li 
+                                option(value= department.id,selected = department.selected) #{department.name}
+               
+        input(type="submit", value="update")
+    button 
+        a(href= '/lecturer')  Cancel update

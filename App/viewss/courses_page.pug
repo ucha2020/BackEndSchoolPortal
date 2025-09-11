@@ -1,0 +1,19 @@
+extends homeLayout 
+block homeMain 
+    .coursesContainer  
+        if courseList && courseList.length > 0
+            .courses
+                ul 
+                    each course in courseList 
+                        .courseInstance
+                            li
+                                button(type="button") 
+                                    a(href=`${course.url}/display`) #{course.name}
+
+            button(type="button") 
+                a(href="/course/create") Create A course
+        else
+            p No course to select from 
+            a(href="/course/create") 
+                button Create a course
+               

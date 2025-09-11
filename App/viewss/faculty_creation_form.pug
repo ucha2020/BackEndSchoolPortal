@@ -1,0 +1,13 @@
+extends homeLayout 
+block homeMain 
+    - const DeanList = [{name: "okeke",id:7},{name: "nwankwor",id: 6},{name:"philip",id:11}]
+    h1 Faculty creation form
+    form(method= "post",action = '/faculty/create',id='form')
+        .nameBlock      
+            label(for="facultyName") Name: 
+            input(type="text", name="name",placeholder="--faculty name--",
+            required,value= faculty && faculty.name,id="facultyName")  
+        
+        input(type="submit",form = "form",value='Create faculty') 
+    button 
+        a(href= '/faculty')  Cancel faculty creation

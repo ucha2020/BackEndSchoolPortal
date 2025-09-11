@@ -1,0 +1,34 @@
+extends homeLayout 
+block homeMain 
+    h2 Department Creation
+    form(method= 'post',action = '/department/create',id='form')
+        .nameBlock  
+                
+            label(for="name") department name: 
+            input(type="text", name="name",required,
+                value= department && department.name,id="departmentName"
+                placeholder="--department name--")
+
+        .errorField
+            label(for="departmentNameError") 
+            input(type="text", id = "departmentNameError",hidden= !isErrorInName,
+                disabled, value= department && department.departmentNameError)    
+
+        .facultyIdBlock  
+            if facultyList && facultyList.length > 0
+                label(for="facultyId") Select a faculty
+                select(name="facultyId",required,id = "facultyId") 
+                    option(value="")  --Select a faculty-
+                    each faculty in facultyList 
+                        li 
+        
+                            option(value= faculty.id ,selected = faculty.selected) #{faculty.name}
+   
+        .errorField
+            label(for="facultyIdError") 
+            input(type="text",id = "facultyIdError",hidden= !isErrorInfacultyId,
+                disabled, value= courseInstance && courseInstance.facultyIdError)
+
+        input(type="submit", value="Submit")
+    button 
+        a(href= '/department') Cancil deparment creation

@@ -1,0 +1,24 @@
+block homeMain 
+    .report 
+        if (method == "GET")
+            - const {greatGrandParent="",grandParent="",parent="",child=""} = nonExistingAncestralList 
+            h2
+                | A #{child} can not be created at the moment because no 
+                | #{parent}#{grandParent ? greatGrandParent ? ", a ": " and a  ":"" } #{ grandParent} #{greatGrandParent && 'and a ' + greatGrandParent} exists in the portal.
+                | Create atleast a #{parent}#{greatGrandParent ? ", ": " and " } #{ grandParent} #{greatGrandParent && 'and a ' + greatGrandParent} in the portal
+                | to continue #{child} creation
+
+            a(href=`/${greatGrandParent||grandParent||parent}/create`)
+                button  Create a #{greatGrandParent||grandParent||parent} 
+            button 
+                a(href= '/')  Cancel #{child} creation    
+        else
+            h2
+                | A #{child} can not be created at the moment because no #{parent} exists in 
+                | the selected #{grandParent}.
+                | Create atleast a #{parent} in the selected #{grandParent}  to continue #{child} creation
+               
+            a(href='/' + parent + '/create')
+                button  Create #{parent} 
+            button 
+                a(href= '/')  Cancel #{child} creation    

@@ -1,0 +1,49 @@
+extends layout 
+block content 
+
+    tittl= title
+    
+    form(method= "POST")
+
+        label(for="imprint") Imprint: 
+        input(type="text", name="imprint", required, placeholder="imprint", 
+        value= (undefined=== bookinstance)? "": bookinstance.imprint) 
+
+        label(for="id") Id: 
+        input(type="number", name="id", required, placeholder="id",
+        value= (undefined=== bookinstance)? "": bookinstance.id)
+
+        div
+            label(for="book") Book title 
+            select(name="book")   
+                option(value="")   --select book--
+                for book in books 
+                    if bookinstance 
+                        if bookinstance.selected == book.id     
+                            option(value= book.id, selected) #{book.title}
+                        else 
+                             option(value= book.id) #{book.title}
+                    else 
+                        option(value= book.id) #{book.title}
+                 
+        div 
+            for status in statusList 
+                if bookinstance 
+                    if bookinstance.checked == status
+                        input(type="checkbox", name= 'status', value= status, checked)
+                        label(for='status')  #{status}
+                    else 
+                        input(type="checkbox", name= 'status', value= status )
+                        label(for="status") &nbsp;#{status}
+                else  
+                    input(type="checkbox", name= "status", value= status )
+                    label(for="status") #{status}
+
+        button(type='submit') Submit
+  
+        if errors
+            ul
+                for error in errors
+                    li!= error.msg
+                
+                    

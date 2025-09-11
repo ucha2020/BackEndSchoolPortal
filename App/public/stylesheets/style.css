@@ -1,0 +1,111 @@
+/* General Reset*/
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+/*Body */
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: #f4f4f4;
+}
+.profilePicture {
+    width: 100px;
+    height: 100px;
+    border-radius: 25px;
+    margin: 15px;
+    background-color: aqua;
+}
+a:hover {
+  color: #00B7FF;
+}
+.mainblock {
+  flex: 1;
+  padding: 30px;
+  background-color: white;
+  overflow-y: auto;
+}
+
+.infoUnit, .contactInfoBlock {
+    margin-bottom: 20px;
+}
+
+ul {
+  list-style-type: none;
+  padding-left: 20px;
+}
+
+.sideblock {
+    padding: 8px;
+    border-radius: 5px;
+    transition: backgroung-color 0.5s;
+}
+
+.header {
+    text-align: center;
+}
+
+.studentPage, .coursePage, .facultyPage, .departmentPage,.lecturerPage {
+  display: flex;
+  height: 90vh;
+}
+
+.home-navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto;
+}
+.home-header{
+  margin: 5px;
+  padding: 8px;
+  background-color: bisque;
+}
+header h1 {
+  text-align: center;
+}
+.card{
+  border-radius: 3px;
+  border-color: black;
+  border-style: outset;
+}
+
+.contactInfoBlock a {
+  color: white;
+  padding: 12px 18px;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.5s ease;
+}
+
+.contactInfoBlock li{
+  position: relative;
+}
+
+.dropdown_menu{
+  display: none;
+  
+  background-color: #444;
+  min-width: 160px;
+  box-shadow: 0 4px 8px rgba(0,0, 0, 1);
+ 
+}
+.dropdown_menu li{
+  width: 100%;
+}
+
+.dropdown:hover .dropdown_menu {
+  display: block;
+}
+
+.dropdown_menu a{
+  padding: 10px 15px;
+}
+
+.dropdown_menu a:hover {
+  background-color: #666;
+}
+
+.dropdown a{
+ display: block;
+}

@@ -1,0 +1,40 @@
+extends homeLayout 
+block homeMain 
+    if (lecturer)
+        .lecturerPage 
+            .mainblock
+                h2.header Header
+                .profilePicture
+                    img(src="", alt="Profile picture", sizes="200px")  
+                .card 
+                    ul
+                        each  value, name in lecturer 
+                            li 
+                                .infoUnit
+                                    p
+                                        strong.name  #{`${name}:  `}
+                                        span.value  #{value}
+
+            .sideblock
+                .infoUnit
+                    p
+                        strong.name  faculty:  
+                        span.value  
+                            a(href= `${faculty.url}/display`) #{faculty.name} 
+
+                .infoUnit
+                    p
+                        strong.name  Department:  
+                        span.value  
+                            a(href= `${department.url}/display`) #{department.name}
+                
+                .contactInfoblock 
+                    h3  Lecturer contact info drop down
+                .editblock 
+                    .deleteblock 
+                        button.delete_btn
+                            a(href= `${url}/delete`) Delete lecturer                    
+
+                    .updateblock
+                        button.update_btn
+                            a(href= `${url}/update`) Update lecturer 

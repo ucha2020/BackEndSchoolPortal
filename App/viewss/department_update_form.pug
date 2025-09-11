@@ -1,0 +1,28 @@
+extends homeLayout 
+block homeMain 
+    h1 department update form
+    form(method= "post",action = `/department/${department.id}/update`,id='form')
+        .nameBlock       
+            label(for="departmentName") Name 
+            input(type="text", name="name",placeholder="--department name--",
+            required,value= department && department.name,id="departmentName")  
+        
+        .errorField
+                label(for="name_error_message") 
+                input(type="text", name="name_error_message",
+                    id = "name_error_message",hidden= !isErrorInName,
+                    disabled, value= department && department.nameError)
+           
+        .facultyIdBlock  
+            if facultyList && facultyList.length > 0
+                label(for="facultyId") Select a faculty
+                select(name="facultyId",required,id = "facultyId") 
+                    option(value="")  --Select a faculty-
+                    each faculty in facultyList 
+                        li 
+                            option(value= faculty.id, selected = faculty.selected ) #{faculty.name}
+        
+        
+    button(type="submit",form = "form") Update department
+    button(type="submit") 
+            a(href= '/department')  Cancil department update

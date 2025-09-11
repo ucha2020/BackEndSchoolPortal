@@ -1,0 +1,28 @@
+extends homeLayout 
+block homeMain
+    if department.option == "create"
+        h1 This name choosen for this department creation already existed in the database
+    else
+         h1 This name choosen for this department update already existed in the database
+    
+    form(method= "post",hidden, id ="form" action='/department/'+ department.option + '_edit')
+        .nameBlock  
+                
+            label(for="departmentName") department name: 
+            input(type="text", name="name",required,
+                value= department && department.name,id="departmentName"
+                placeholder="--department name--")
+
+        .facultyIdBlock  
+            if facultyList && facultyList.length > 0
+                label(for="facultyId") Select a faculty
+                select(name="facultyId",required, Id = "facultyId") 
+                    option(value="")  --Select a faculty-
+                        each faculty in facultyList 
+                            li 
+                                option(value= faculty.id,selected = faculty.selected) #{faculty.name}
+        
+    button(form='form')  Continue with department creation
+    button 
+        a(href= '/department')  Cancil deparment #{department.option == 'create'? "creation": "update"}
+

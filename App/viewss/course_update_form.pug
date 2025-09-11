@@ -1,0 +1,44 @@
+extends homeLayout 
+block homeMain 
+    form(method ="post",id='form',action = `/course/${course.id}/update`)
+        h2 Course update
+        .nameBlock  
+                
+            label(for="courseName") Name: 
+            input(type="text", name="name",required,
+                value= course && course.name,id="courseName"
+                placeholder="--Course name--")
+
+        .titleBlock  
+                
+            label(for="courseTitle")  Title: 
+            input(type="text", name="title",required,
+                value= course && course.title,id= "courseTitle"
+                laceholder="--Course title--")
+
+        .levelBlock  
+                
+            label(for="courseLevel") Level: 
+            input(type="text", name="level",required,
+                value= course && course.level, id="courseLevel"
+                placeholder="--course credit level--")
+
+        .creditUnitBlock  
+                
+            label(for="creditUnit") CreditUnit: 
+            input(type="text", name="creditUnit",required,
+                value= course && course.creditUnit,id="creditUnit"
+                placeholder="--Credit unit--")
+
+        .lecturerIdBlock  
+            if lecturerList && lecturerList.length > 0
+                label(for="lecturerId") Select a lecturer
+                select(name="lecturerId",required,id ='lecturerId') 
+                    option(value="")  --Select a lecturer-
+                        each lecturer in lecturerList 
+                            li 
+                                option(value= lecturer.id, selected = lecturer.selected) #{lecturer.fullName}
+            
+    button(form='form')   Update
+    button
+        a(href= '/course')  Cancel Update

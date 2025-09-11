@@ -1,0 +1,19 @@
+extends homeLayout 
+block homeMain 
+    .lecturersContainer  
+        if lecturerList && lecturerList.length > 0
+            .lecturers
+                ul 
+                    each lecturer in lecturerList 
+                        .lecturerInstance
+                            li
+                                button(type="button") 
+                                    a(href= `${lecturer.url}/display`) #{lecturer.fullName}
+            label(for="name") Create a lecturer: 
+                button(type="button") 
+                    a(href="/lecturer/create") Create A lecturer
+        else
+            p No lecturer to select from  
+            a(href="/lecturer/create", name='lecturerCreation') 
+                button(type="button") Create A lecturer
+               

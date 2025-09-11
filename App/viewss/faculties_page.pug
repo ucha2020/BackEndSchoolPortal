@@ -1,0 +1,20 @@
+extends homeLayout 
+block homeMain 
+    .facultiesContainer  
+        if facultyList && facultyList.length > 0
+            .facultys
+                ul 
+                    each faculty in facultyList 
+                        .facultyInstance
+                            li
+                                button(type="button") 
+                                    a(href=`${faculty.url}/display`) #{faculty.name}
+
+            label(for="name") Create a faculty: 
+                button(type="button") 
+                    a(href= 'faculty/create') Create A faculty
+        else
+            p No faculty to select from  
+            a(href="/faculty/create") 
+                button Create A faculty
+               

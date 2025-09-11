@@ -1,0 +1,73 @@
+extends homeLayout 
+block homeMain 
+
+    form(method ="post",id='form',action = `/student/${student.id}/update`)
+        h2 Student update
+        .firstNameBlock  
+                
+            label(for="firstName") firstName: 
+            input(type="text", name="firstName",placeholder="firstName",
+                    value= student && student.firstName, id = "firstName")
+
+        .lastNameBlock  
+                
+            label(for="lastName") lastName: 
+            input(type="text", name="lastName",placeholder="lastName",
+                    value= student && student.lastName, id = 'lastName')
+
+        .genderBlock  
+                
+            label(for="gender") gender: 
+            input(type="text", name="gender",placeholder=" gender",
+                    value= student && student.gender,id = 'gender')
+
+        .nameBlock  
+                
+            label(for="dateOfBirth") dateOfBirth: 
+            input(type="text", name="dateOfBirth",placeholder="dateOfBirth",
+                    value= student && student.dateOfBirth,id = 'dateOfBirth')
+
+        .admissionDateBlock  
+                
+            label(for="admissionDate") admissionDate: 
+            input(type="text", name="admissionDate",placeholder="admissionDate",
+                    value= student && student.admissionDate, id='admissionDate')
+
+        .CGPBlock  
+                
+            label(for="CGP") CGP: 
+            input(type="text", name="CGP",placeholder=" CGP",
+                    value= student && student.CGP,id= 'CGP')
+
+        .financialStatusBlock  
+                
+            label(for="financialStatus") financialStatus: 
+            input(type="text", name="financialStatus",placeholder="financialStatus",
+                    value= student && student.financialStatus,id="financialStatus")
+
+        .levelBlock  
+                
+            label(for="level") level: 
+            input(type="text", name="level",placeholder="level",
+                    value= student && student.level,id='level')
+      
+        .departmentIdBlock  
+            if departmentList && departmentList.length > 0
+                label(for="departmentId") Select a department
+                select(name="departmentId",required,id ='departmentId') 
+                    option(value="")  --Select a faculty-
+                        each department in departmentList 
+                            li 
+                                option(value= department.id, selected = department.selected) #{department.name}
+
+        .add 
+            a(href="/student/update_add") 
+                button Add Course
+
+        .add 
+            a(href="#") 
+                button Assign Course Adverser       
+            
+        input(type="submit", value="Update")
+    button 
+        a(href= '/student')  Cancel update

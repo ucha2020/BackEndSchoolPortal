@@ -1,0 +1,44 @@
+.selectGrandParent 
+    h2
+        | select a #{greatGrandParent.name != "school" && !grandParent.selected ? greatGrandParent.name : grandParent.name} for this #{child.name}
+
+    form(method="post",action='/' + child.name + '/create_edit')
+        .greatGrandParentListBlock 
+            if greatGrandParent.name != "school" && !grandParent.selected &&  greatGrandParentList && greatGrandParentList.length > 0
+                label(for="greatGrandParent") Select a #{greatGrandParent.name}
+                select(name="greatGrandParent",required,id = "greatGrandParent") 
+                    option(value="")  --Select a #{greatGrandParent.name}
+                    each greatGrandParent in greatGrandParentList 
+                        li 
+                            option(value= greatGrandParent.id) #{greatGrandParent.name}
+
+        .grandParentListBlock 
+            if grandParentList && grandParentList.length > 0
+                label(for="grandParent") Select a #{grandParent.name}
+                select(name="grandParent",required,id = "grandParent") 
+                    option(value="")  --Select a #{grandParent.name}
+                    each grandParent in grandParentList 
+                        li 
+                            option(value= grandParent.id) #{grandParent.name}
+
+        .parentListBlock 
+            if parentList && parentList.length > 0
+                label(for="parent") Select a #{parent.name}
+                select(name="parent",required,id = "parent") 
+                    option(value="")  --Select a #{parent.name}
+                    each parent in parentList 
+                        li 
+                            option(value= parent.id) #{parent.name}
+      
+    
+        input(type="hidden", name="greatGrandParent",value= greatGrandParent)
+        input(type="hidden", name="grandParent",value= grandParent)
+        input(type="hidden", name="parent",value= parent)
+        input(type="hidden", name="child",value= child)
+        i
+
+        .btn
+            input(type="submit", value="submit")
+            button(type="button") 
+                a(href="/") Cancel 
+    

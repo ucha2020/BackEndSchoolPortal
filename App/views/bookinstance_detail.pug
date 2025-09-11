@@ -1,0 +1,11 @@
+extends layout 
+
+block content 
+
+    h1 A copy of 
+        a(href= bookinstance.book.url)  #{bookinstance.book.title}
+    hr
+    p #[strong Status:] #{bookinstance.status} 
+    hr
+    p #[strong Imprint:] #{bookinstance.imprint}
+    

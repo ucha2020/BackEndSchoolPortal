@@ -1,0 +1,66 @@
+extends homeLayout 
+block homeMain 
+    - const isErrorInName = course && course.nameError
+    
+    form(method= "post",action='/course/create',id='form')
+        .nameBlock  
+                
+            label(for="courseName") Name: 
+            input(type="text", name="name",required,
+                value= course && course.name,id="courseName"
+                placeholder="--Course name--")
+
+        .errorField
+            label(for="courseNameError") 
+            input(type="text", id = "courseNameError",hidden= !isErrorInName,
+                    disabled, value= course && course.courseNameError)    
+
+        .titleBlock  
+                
+            label(for="courseTitle")  Title: 
+            input(type="text", name="title",required,
+                value= course && course.title,id= "courseTitle"
+                laceholder="--Course title--")
+
+        .errorField
+            label(for="courseTitleError") 
+            input(type="text",id = "courseTitleError",hidden= !isErrorInCourseTitle,
+                    disabled, value= course && course.courseTitleError)
+    
+        .levelBlock  
+                
+            label(for="courseLevel") Level: 
+            input(type="text", name="level",required,
+                value= course && course.level, id="courseLevel"
+                placeholder="--course credit level--")
+
+        .errorField
+            label(for="courseLevelError") 
+            input(type="text",id = "courseLevelError",hidden= !isErrorInCourseLevel,
+                    disabled, value= course && course.courseLevelError)
+    
+        .creditUnitBlock  
+                
+            label(for="creditUnit") CreditUnit: 
+            input(type="text", name="creditUnit",required,
+                value= course && course.creditUnit,id="creditUnit"
+                placeholder="--Credit unit--")
+
+        .errorField
+            label(for="creditUnitError") 
+            input(type="text",id = "creditUnitError",hidden= !isErrorInCreditUnit,
+                disabled, value= course && course.creditUnitError)
+
+        .lecturerIdBlock  
+            if lecturerList && lecturerList.length > 0
+                label(for="lecturerId") Select a lecturer
+                select(name="lecturerId",required,id ='lecturerId') 
+                    option(value="")  --Select a lecturer-
+                        each lecturer in lecturerList 
+                            li 
+                                option(value= lecturer.id, selected = lecturer.selected) #{lecturer.fullName}
+            
+     
+    button(form='form')  Create course 
+    button
+        a(href= '/course')  Cancil course creation

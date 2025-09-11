@@ -1,0 +1,19 @@
+extends homeLayout 
+block homeMain 
+    
+    if faculty.option == "create"
+        h1 This name choosen for this faculty creation already existed in the database
+    else
+         h1 This name choosen for this faculty update already existed in the database
+    
+    form(method= "post",hidden, id ="form" action='/faculty/'+ faculty.option + '_edit')
+        .nameBlock  
+                
+            label(for="facultyName") Name: 
+            input(type="text", name="name",
+                value= faculty && faculty.name,id="facultyName")  
+    
+    button(type="submit",form='form')  continue with faculty creation
+    button(type="submit") 
+        a(href= '/faculty')  Cancel faculty #{faculty.option == 'create'? "creation": "update"}
+

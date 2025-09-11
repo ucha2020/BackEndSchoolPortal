@@ -1,0 +1,8 @@
+extends homeLayout 
+block homeMain 
+    h1 #{faculty.name}
+    p Do you really want to delete this faculty 
+    form(method= "post")
+        input(type="hidden", name="facultyId", value= faculty.id)
+        button(type="submit") Delete
+         

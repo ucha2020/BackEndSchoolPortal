@@ -1,0 +1,8 @@
+extends homeLayout 
+block homeMain 
+    h1 #{lecturer.fullName}
+    p Do you really want to delete this lecturer 
+    form(method= "post")
+        input(type="hidden", name="lecturerId", value= lecturer.id)
+        button(type="submit") Delete
+         

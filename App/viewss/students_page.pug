@@ -1,0 +1,19 @@
+extends homeLayout 
+block homeMain 
+    .studendsContainer  
+        if studentList && studentList.length > 0
+            .students
+                ul 
+                    each student in studentList 
+                        .studentInstance
+                            li
+                                button(type="button") 
+                                    a(href= `${student.url}/display`) #{student.fullName}
+ 
+                button(type="button") 
+                    a(href="/student/create") Create A student
+        else
+            p No student to select from  
+            a(href="/student/create") 
+                button(type="button") Create A student
+               

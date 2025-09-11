@@ -1,0 +1,45 @@
+extends homeLayout 
+block homeMain 
+    if course.option == "create"
+        h1 This name choosen for this course creation already existed in the database
+    else
+         h1 This name choosen for this course update already existed in the database
+    
+    form(method= "post",hidden, id ="form" ,action='/course/'+ course.option + '_edit')
+        .nameBlock  
+                
+            label(for="courseName") course name: 
+            input(type="text", name="name",
+                value= course && course.name,id="courseName")  
+
+        .titleBlock  
+                
+            label(for="courseTitle") course title: 
+            input(type="text", name="title",
+                value= course && course.title,id= "courseTitle")
+    
+        .levelBlock  
+                
+            label(for="courseLevel") course level: 
+            input(type="text", name="level",
+                value= course && course.level, id="courseLevel")
+
+        .creditUnitBlock  
+                
+            label(for="creditUnit") course creditUnit: 
+            input(type="text", name="creditUnit",
+                value= course && course.creditUnit,id="creditUnit")
+
+        .lecturerIdBlock  
+            if lecturerList && lecturerList.length > 0
+                label(for="lecturerId") Select a lecturer
+                select(name="lecturerId",required,id ='lecturerId') 
+                    option(value="")  --Select a lecturer-
+                        each lecturer in lecturerList 
+                            li 
+                                option(value= lecturer.id, selected = lecturer.selected) #{lecturer.fullName}
+        
+
+    button(type="submit",form = "form") Continue with course creation
+    button(type="submit") 
+            a(href= '/course')  Cancel course creation

@@ -1,0 +1,12 @@
+extends homeLayout 
+block homeMain
+    h2
+        | The lecturers in the choosen department have each been assigned a course 
+        | So a new lecturer should be created or atleast a lecturer should have 
+        | his or her course removed to create room for the new course creation
+           
+    button(type="submit")
+        a(href="/lecturer/create")   Create lecturer
+    button(type="submit") 
+        a(href= '/')  Cancel 
+
