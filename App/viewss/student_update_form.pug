@@ -60,13 +60,13 @@ block homeMain
                             li 
                                 option(value= department.id, selected = department.selected) #{department.name}
 
-        .add 
-            a(href="/student/update_add") 
-                button Add Course
+    .add 
+        a(href= student.url + "/update_add") 
+            button Add Course
 
-        .add 
-            a(href="#") 
-                button Assign Course Adverser       
+    .add 
+        a(href="#") 
+            button Assign Course Adverser       
             
         input(type="submit", value="Update")
     button 

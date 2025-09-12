@@ -1,23 +1,23 @@
 /* General Reset*/
 * {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 /*Body */
 body {
-    font-family: Arial, Helvetica, sans-serif;
-    background-color: #f4f4f4;
+  font-family: Arial, Helvetica, sans-serif;
+  background-color: #f4f4f4;
 }
 .profilePicture {
-    width: 100px;
-    height: 100px;
-    border-radius: 25px;
-    margin: 15px;
-    background-color: aqua;
+  width: 100px;
+  height: 100px;
+  border-radius: 25px;
+  margin: 15px;
+  background-color: aqua;
 }
 a:hover {
-  color: #00B7FF;
+  color: #00b7ff;
 }
 .mainblock {
   flex: 1;
@@ -26,8 +26,9 @@ a:hover {
   overflow-y: auto;
 }
 
-.infoUnit, .contactInfoBlock {
-    margin-bottom: 20px;
+.infoUnit,
+.contactInfoBlock {
+  margin-bottom: 20px;
 }
 
 ul {
@@ -36,16 +37,20 @@ ul {
 }
 
 .sideblock {
-    padding: 8px;
-    border-radius: 5px;
-    transition: backgroung-color 0.5s;
+  padding: 8px;
+  border-radius: 5px;
+  transition: backgroung-color 0.5s;
 }
 
 .header {
-    text-align: center;
+  text-align: center;
 }
 
-.studentPage, .coursePage, .facultyPage, .departmentPage,.lecturerPage {
+.studentPage,
+.coursePage,
+.facultyPage,
+.departmentPage,
+.lecturerPage {
   display: flex;
   height: 90vh;
 }
@@ -56,7 +61,7 @@ ul {
   align-items: center;
   margin: 0 auto;
 }
-.home-header{
+.home-header {
   margin: 5px;
   padding: 8px;
   background-color: bisque;
@@ -64,7 +69,7 @@ ul {
 header h1 {
   text-align: center;
 }
-.card{
+.card {
   border-radius: 3px;
   border-color: black;
   border-style: outset;
@@ -78,19 +83,18 @@ header h1 {
   transition: background-color 0.5s ease;
 }
 
-.contactInfoBlock li{
+.contactInfoBlock li {
   position: relative;
 }
 
-.dropdown_menu{
+.dropdown_menu {
   display: none;
-  
+
   background-color: #444;
   min-width: 160px;
-  box-shadow: 0 4px 8px rgba(0,0, 0, 1);
- 
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
 }
-.dropdown_menu li{
+.dropdown_menu li {
   width: 100%;
 }
 
@@ -98,7 +102,7 @@ header h1 {
   display: block;
 }
 
-.dropdown_menu a{
+.dropdown_menu a {
   padding: 10px 15px;
 }
 
@@ -106,6 +110,23 @@ header h1 {
   background-color: #666;
 }
 
-.dropdown a{
- display: block;
+.dropdown a {
+  display: block;
+}
+
+fieldset {
+  background: cyan;
+  border: 5px solid #0000ff;
+  padding: 5px;
+  margin-bottom: 15px;
+  max-width: fit-content;
+}
+
+legend {
+  padding: 10px;
+  background: blue;
+  color: cyan;
+}
+strong {
+  margin: 5px;
 }
