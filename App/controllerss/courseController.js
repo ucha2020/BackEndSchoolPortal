@@ -39,7 +39,7 @@ exports.course_page = asyncHandler(async (req, res, next) => {
     courseLecturer.departmentId
   );
   const courseFaculty = await Faculty.findByPk(courseDepartment.facultyId);
-  const courseStudents = await Course.findAll({});
+  const courseStudents = await course.getStudents();
 
   //const url = course.url;
   courseRaw.courseCode =
@@ -193,39 +193,36 @@ exports.course_creation_form = asyncHandler(async (req, res, next) => {
         if (availableLecturers.length > 0) {
           // There exist at this point atleast a lecturer is available for course assignment
           //therefore, a lecturer should be selected for the course creation
-          res.render("course_creation_form", {
-            title: "course creation form",
-            lecturerList: availableLecturers,
+          const ancestryStatus = {
+            greatGrandParent: { name: "faculty", selected: true },
+            grandParent: { name: "department", selected: true },
+            parent: { name: "lecturer", selected: true },
+            child: { name: "course" },
+          };
+          res.render("select_ancestry_form", {
+            title: "select a department for this course",
+            parentList: availableLecturers,
+            ...ancestryStatus,
           });
           return;
         } else {
-          // The lecturers in the choosen department have been assigned a course
+          // The lecturers in the choosen department have all been assigned a course
           //So a new lecturer should be created or atleast a lecturer should have
-          // his or her course removed to create room for the new course creation
+          // his or her assigned course removed to create room for the new course creation
 
-          res.render("new_lecturer");
+          res.render("new_lecturer", {
+            departmentId: selectedDepartmentId,
+          });
         }
       }
-    } else {
-      // Get the list of all the lecturers under the department where the course is to be created
-      const selectedLecturerId = course.lecturerId;
-      const selectedLecturer = await Lecturer.findByPk(selectedLecturerId);
-      const selectedDepartmentId = selectedLecturer.departmentId;
-      const selectedDepartmentlecturers = await Lecturer.findAll({
-        where: {
-          departmentId: selectedDepartmentId,
-        },
-      });
-      //Mark the selected lecturer in the the list of all the lecturer from the selected department
-      const lecturerList = checkAssociatedModelInstances(
-        selectedDepartmentlecturers,
-        [selectedLecturer]
-      );
+    } else if (Array.isArray(course.parent)) {
+      // A lecturer under the department where the course is to be created has been selected
+      const selectedLecturerId = course.parent[0];
+      const lecturer = await Lecturer.findByPk(selectedLecturerId);
 
       res.render("course_creation_form", {
         title: "course creation form",
-        course,
-        lecturerList,
+        lecturer,
       });
     }
   }
@@ -259,23 +256,14 @@ exports.course_create_formData_processor = [
           name: course.name,
         },
       });
-      let lecturerList = await Lecturer.findAll();
+      let lecturer = await Lecturer.findByPk(course.lecturerId);
       course.option = "create";
 
       if (courseWithSameName) {
-        const courseLecturerList = await get_Obj_array_from_id_array(
-          [course.lecturerId],
-          Lecturer
-        );
-        lecturerList = checkAssociatedModelInstances(
-          lecturerList,
-          courseLecturerList
-        );
-
         res.render("course_already_existing", {
           title: "course_already_existing",
           course,
-          lecturerList,
+          lecturer,
         });
       } else {
         const newcourse = await Course.create(course);
@@ -309,15 +297,7 @@ exports.course_update_formData_processor = [
     } else {
       //The data is valid at this point
       course.id = req.params.id;
-      course.lecturer = await Lecturer.findByPk(course.lecturerId);
-      // Get ID of the department associated with course
-      const courseDepartmentid = course.lecturer.departmentId;
-      // Get all the lecturer associated with the department where the course belongs with course
-      const lecturerList = await Lecturer.findAll({
-        where: {
-          departmentId: courseDepartmentid,
-        },
-      });
+      const lecturer = await Lecturer.findByPk(course.lecturerId);
 
       //Check if a course with the same name already exists in the database
       const courseWithSameName = await Course.findOne({
@@ -326,16 +306,12 @@ exports.course_update_formData_processor = [
         },
       });
       if (courseWithSameName && courseWithSameName.id != req.params.id) {
-        const workedLecturerList = checkAssociatedModelInstances(lecturerList, [
-          course.lecturer,
-        ]);
-
         course.option = req.params.id + "/update";
 
         res.render("course_already_existing", {
           title: "course_already_existing",
           course,
-          lecturerList: workedLecturerList,
+          lecturer,
         });
       } else {
         await Course.update(course, {
@@ -352,40 +328,20 @@ exports.course_update_formData_processor = [
 ];
 
 exports.course_update_form = asyncHandler(async (req, res, next) => {
-  let lecturerList;
+  let lecturer;
   let course;
 
   if (req.method === "GET") {
     course = await Course.findByPk(req.params.id, {
       include: [Lecturer],
     });
-    // Get ID of the department where the course belongs
-    const courseDepartmentid = course.lecturer.departmentId;
-    // Get all the lecturers associated with the department where the course belongs
-    lecturerList = await Lecturer.findAll({
-      where: {
-        departmentId: courseDepartmentid,
-      },
-    });
+    lecturer = course.lecturer;
   } else if (req.method === "POST") {
     //Create a courseInstance with the form data
     course = courseInstance(req.body);
     course.id = req.params.id;
-    course.lecturer = await Lecturer.findByPk(course.lecturerId);
-    // Get ID of the department associated with course
-    const courseDepartmentid = course.lecturer.departmentId;
-    // Get all the lecturer associated with the department where the course belongs with course
-    lecturerList = await Lecturer.findAll({
-      where: {
-        departmentId: courseDepartmentid,
-      },
-    });
+    lecturer = await Lecturer.findByPk(course.lecturerId);
   }
-
-  //Add checked plag to each of the lecturers associated to the course from lecturerList
-  const workedLecturerList = checkAssociatedModelInstances(lecturerList, [
-    course.lecturer,
-  ]);
   res.render("course_update_form", {
     title: "course update form",
     course,
