@@ -5,6 +5,7 @@ const {
   Student,
   Department,
   Lecturer,
+  Course,
 } = require("../config/model_sync");
 const asyncHandler = require("express-async-handler");
 const {
@@ -14,7 +15,7 @@ const {
 
 exports.student_page = asyncHandler(async (req, res, next) => {
   const student = await Student.findByPk(req.params.id, {
-    include: [Department, Lecturer],
+    include: [Department, Lecturer, Course],
   });
 
   const studentRaw = await Student.findByPk(req.params.id, {
@@ -27,6 +28,7 @@ exports.student_page = asyncHandler(async (req, res, next) => {
   const studentDeparment = student.department;
   const studentLecturer = student.lecturer;
   const studentFaculty = await Faculty.findByPk(studentDeparment.facultyId);
+  const studentCourseList = await student.getCourses();
   const url = student.url;
   studentRaw.regNo = "0" + studentFaculty.id + studentDeparment.id + student.id;
   res.render("student_page", {
@@ -35,6 +37,7 @@ exports.student_page = asyncHandler(async (req, res, next) => {
     department: studentDeparment,
     faculty: studentFaculty,
     lecturer: studentLecturer,
+    courses: studentCourseList,
     url,
   });
 });
@@ -237,7 +240,7 @@ exports.student_update_form = asyncHandler(async (req, res, next) => {
       },
     });
   }
-  //Add checked plag to each of the departments associated to the student from departmentList
+  //Add checked flag to each of the departments associated to the student from departmentList
   const workedDepartmentList = checkAssociatedModelInstances(departmentList, [
     student.department,
   ]);
@@ -257,6 +260,7 @@ exports.student_update_form = asyncHandler(async (req, res, next) => {
 
   studentCourseList = studentCourseList.flat();
   studentCourseList = new Set(studentCourseList);
+  studentCourseList = Array.from(studentCourseList);
 
   res.render("student_update_form", {
     title: "student update form",
@@ -266,14 +270,43 @@ exports.student_update_form = asyncHandler(async (req, res, next) => {
   });
 });
 
-exports.student_update_add_form = asyncHandler(async (req, res, next) => {
+exports.student_update_addCourse_form = asyncHandler(async (req, res, next) => {
   const student = await Student.findByPk(req.params.id, {
     include: [Department],
   });
+  if (req.method === "POST") {
+    let studentCourseIds = req.body.modelIds;
+    const studentId = req.params.id;
+    //convert studentCourseIds to array if it is a string
+    if (!Array.isArray(studentCourseIds)) {
+      studentCourseIds = [studentCourseIds];
+    }
+
+    const studentCourseList = await get_Obj_array_from_id_array(
+      studentCourseIds,
+      Course
+    );
+    await student.addCourses(studentCourseList);
+
+    res.redirect(student.url + "/display");
+
+    return;
+  }
+  // Check to see that the student has not reached it course addition count limit of 10
+  const courseCount = await student.courseCount();
+  if (courseCount > 9) {
+    res.render("message_report", {
+      message: "Maximum courseload reached for this student",
+      url: student.url + "/update",
+    });
+    return;
+  }
   // Get all the lecturers in the department where the student belongs
   // From the list of the lecturers, get all the  courses under the department where the student belongs
   const lecturerList = await Lecturer.findAll({
-    departmentId: student.departmentId,
+    where: {
+      departmentId: student.departmentId,
+    },
   });
   let studentCourseList = [];
 
@@ -286,10 +319,42 @@ exports.student_update_add_form = asyncHandler(async (req, res, next) => {
   studentCourseList = new Set(studentCourseList);
   //pug iterates over array and object but not set
   studentCourseList = [...studentCourseList];
-  res.render("student_update_add", {
-    studentCourseList,
+  res.render("update_add_remove", {
+    modelList: studentCourseList,
   });
 });
+
+exports.student_update_removeCourse_form = asyncHandler(
+  async (req, res, next) => {
+    const student = await Student.findByPk(req.params.id);
+
+    if (req.method === "POST") {
+      let studentCourseIds = req.body.modelIds;
+      const studentId = req.params.id;
+      //convert studentCourseIds to array if it is a string
+      if (!Array.isArray(studentCourseIds)) {
+        studentCourseIds = [studentCourseIds];
+      }
+
+      const studentCourseList = await get_Obj_array_from_id_array(
+        studentCourseIds,
+        Course
+      );
+      await student.removeCourses(studentCourseList);
+
+      res.redirect(student.url + "/display");
+
+      return;
+    }
+
+    // Get all the courses the student offers
+    const studentCourseList = await student.getCourses();
+    res.render("update_add_remove", {
+      modelList: studentCourseList,
+    });
+  }
+);
+
 exports.student_update_formData_processor = [
   //validate and sanitize the name field
   body("firstName", "student name must contain at least 3 characters")

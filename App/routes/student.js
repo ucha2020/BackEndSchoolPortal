@@ -15,9 +15,16 @@ route.get("/:id/display", student.student_page);
 
 route.get("/:id/update", student.student_update_form);
 
-route.get("/:id/update_add", student.student_update_add_form);
+route.get("/:id/update_addCourse", student.student_update_addCourse_form);
 
-route.post("/:id/update_add", student.student_update_add_form);
+route.get("/:id/update_removeCourse", student.student_update_removeCourse_form);
+
+route.post("/:id/update_addCourse", student.student_update_addCourse_form);
+
+route.post(
+  "/:id/update_removeCourse",
+  student.student_update_removeCourse_form
+);
 
 route.post("/:id/update", student.student_update_formData_processor);
 

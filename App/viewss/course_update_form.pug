@@ -31,14 +31,11 @@ block homeMain
                 placeholder="--Credit unit--")
 
         .lecturerIdBlock  
-            if lecturerList && lecturerList.length > 0
-                label(for="lecturerId") Select a lecturer
-                select(name="lecturerId",required,id ='lecturerId') 
-                    option(value="")  --Select a lecturer-
-                        each lecturer in lecturerList 
-                            li 
-                                option(value= lecturer.id, selected = lecturer.selected) #{lecturer.fullName}
-            
+            label(for="course_lecturerId") Selected lecturer
+            input(type="text", hidden, name="lecturerId",
+                required,id="course_lecturerId",value= lecturer.id,) 
+            span.selected  : #{lecturer.fullName}
+                        
     button(form='form')   Update
     button
         a(href= '/course')  Cancel Update

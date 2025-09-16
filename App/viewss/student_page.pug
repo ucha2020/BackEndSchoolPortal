@@ -37,6 +37,17 @@ block homeMain
                         strong.name  Student Courses:  
                         span.value  
                             a(href)  Student Course Details
+
+                .studentCoursesblock
+                    .dropdown
+                        a(href="#")  
+                            strong Student's  Courses :
+                        ul.dropdown_menu 
+                            each course in courses 
+                                li
+                                    a(href=`${course.url}/display`) 
+                                        strong #{ course.name}
+  
                 .contactInfoblock 
                     h3 Contact info dropdown
 

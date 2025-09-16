@@ -38,14 +38,10 @@ block homeMain
             id="lecturer_dateOfEmployment",value= lecturer && lecturer.dateOfEmployment)
 
         .departmentIdBlock  
-            if departmentList && departmentList.length > 0
-                label(for="lecturer_departmentId") Select a department
-                select(name="departmentId",required,id="lecturer_departmentId") 
-                    option(value="")  --Select a faculty-
-                        each department in departmentList 
-                            li 
-                                option(value= department.id,selected = department.selected) #{department.name}
-                
+            label(for="lecturer_departmentId") Selected department
+            input(type="text", disabled name="departmentId",
+                required,id="lecturer_departmentId",value= department.id,
+                placeholder= department.name)     
     button(form='form')  continue with lecturer #{lecturer.option == 'create'? "creation": "update"}
     button 
         a(href= '/lecturer  `')  Cancil lecturer #{lecturer.option == 'create'? "creation": "update"}

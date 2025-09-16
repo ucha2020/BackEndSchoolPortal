@@ -1,10 +1,25 @@
 .selectGrandParent 
-    h2
-        | select a #{greatGrandParent.name != "school" && !grandParent.selected ? greatGrandParent.name : grandParent.name} for this #{child.name}
+    //-
+        h2 = { 'select a ' 
+                greatGrandParent.name != "school" 
+                
+                ? //Course creation
+                    parent.selected &&  parent.name ||
+                    grandParent.selected &&  grandParent.name || 
+                    greatGrandParent.selected &&  greatGrandParent.name  
+                
+                : //Any other model not course                 
+                    parent.selected &&  parent.name ||
+                    grandParent.selected &&  grandParent.name 
 
+            ' for this' child.name
+        }
+
+    h2 select a #{ greatGrandParent.name != "school" ? parent.selected &&  parent.name || grandParent.selected &&  grandParent.name || greatGrandParent.selected &&  greatGrandParent.name  : parent.selected &&  parent.name || grandParent.selected &&  grandParent.name }  for this #{child.name}
+  
     form(method="post",action='/' + child.name + '/create_edit')
         .greatGrandParentListBlock 
-            if greatGrandParent.name != "school" && !grandParent.selected &&  greatGrandParentList && greatGrandParentList.length > 0
+            if greatGrandParentList && greatGrandParentList.length > 0
                 label(for="greatGrandParent") Select a #{greatGrandParent.name}
                 select(name="greatGrandParent",required,id = "greatGrandParent") 
                     option(value="")  --Select a #{greatGrandParent.name}
@@ -26,9 +41,9 @@
                 label(for="parent") Select a #{parent.name}
                 select(name="parent",required,id = "parent") 
                     option(value="")  --Select a #{parent.name}
-                    each parent in parentList 
+                    each model in parentList 
                         li 
-                            option(value= parent.id) #{parent.name}
+                            option(value= model.id) #{parent.name=="lecturer"||parent.name=="student"?model.fullName:model.name}
       
     
         input(type="hidden", name="greatGrandParent",value= greatGrandParent)

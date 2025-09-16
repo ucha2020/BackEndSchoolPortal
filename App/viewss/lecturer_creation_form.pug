@@ -35,14 +35,11 @@ block homeMain
             id="lecturer_dateOfEmployment",value= lecturer && lecturer.dateOfEmployment)
 
         .departmentIdBlock  
-            if departmentList && departmentList.length > 0
-                label(for="lecturer_departmentId") Select a department
-                select(name="departmentId",required,id="lecturer_departmentId") 
-                    option(value="")  --Select a department-
-                        each department in departmentList 
-                            li 
-                                option(value= department.id,selected = department.selected) #{department.name}
-           
+            label(for="lecturer_departmentId") Selected department
+            input(type="text", hidden, name="departmentId",
+                required,id="lecturer_departmentId",value= department.id,) 
+            span.selected  : #{department.name}
+                            
         input(type="submit", value="Submit")
     button 
         a(href= '/lecturer') Cancel lecturer creation

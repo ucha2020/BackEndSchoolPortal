@@ -3,10 +3,10 @@ block homeMain
     h2
         | The lecturers in the choosen department have each been assigned upto two courses.
         | So a new lecturer should be created or atleast a lecturer should have 
-        | his or her course removed to create room for the new course creation
-           
-    button(type="submit")
-        a(href="/lecturer/create")   Create lecturer
+        | his or her assigned course removed to create room for the new course creation
+    form(action="/lecturer/create_edit", method="post",hidden.id="form")
+        input(type="text", name="departmentId",value=departmentId)        
+    button(type="submit",form= "form") Create a lecturer
     button(type="submit") 
         a(href= '/')  Cancel 
 

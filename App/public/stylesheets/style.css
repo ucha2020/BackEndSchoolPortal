@@ -27,7 +27,7 @@ a:hover {
 }
 
 .infoUnit,
-.contactInfoBlock {
+.courseStudentsblock {
   margin-bottom: 20px;
 }
 
@@ -75,22 +75,24 @@ header h1 {
   border-style: outset;
 }
 
-.contactInfoBlock a {
-  color: white;
+.courseStudentsblock a,
+.studentCoursesblock a {
+  color: black;
   padding: 12px 18px;
   text-decoration: none;
   display: block;
   transition: background-color 0.5s ease;
 }
 
-.contactInfoBlock li {
+.courseStudentsblock li,
+.studentCoursesblock li {
   position: relative;
 }
 
 .dropdown_menu {
   display: none;
 
-  background-color: #444;
+  background-color: lightgrey;
   min-width: 160px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
 }
@@ -107,9 +109,12 @@ header h1 {
 }
 
 .dropdown_menu a:hover {
-  background-color: #666;
+  background-color: darkgrey;
 }
 
+.dropdown {
+  background-color: gray;
+}
 .dropdown a {
   display: block;
 }
@@ -128,5 +133,49 @@ legend {
   color: cyan;
 }
 strong {
+  margin: 5px;
+}
+
+.add a,
+.remove a {
+  text-decoration: none;
+  display: inline-block;
+  padding: 12px 24px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #fff;
+  background-color: #00b7ff;
+  border-radius: 5px;
+  border: 2px solid transparent;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
+.add a:hover,
+.remove a:hover {
+  background-color: #0056b3;
+  border-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 15px rgba(0, 123, 255, 0.4);
+}
+.add a:focus,
+.remove a:focus {
+  outline: none;
+  border-color: #004085;
+  box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
+}
+.add a:active,
+.remove a:active {
+  transform: translateY(1px);
+  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+}
+
+span[class="selected"] {
+  display: inline-block;
+  text-align: start;
+  border-width: 2px;
+  border-style: inset;
+  border-color: rgb(118, 118, 118);
+  padding-block: 1px;
+  padding-inline: 2px;
   margin: 5px;
 }

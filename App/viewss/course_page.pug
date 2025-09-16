@@ -33,13 +33,13 @@ block homeMain
                         span.value  
                             a(href= `${lecturer.url}/display`) #{lecturer.fullName }
                 
-                .contactInfoblock
+                .courseStudentsblock
                     .dropdown
                         a(href="#")  Students offering this Course :
                         ul.dropdown_menu 
                             each student in studentList 
                                 li
-                                    a(href=`${student.url}/display`) #{ student.name}
+                                    a(href=`${student.url}/display`) #{ student.fullName}
   
                 .editblock 
                     .deleteblock 

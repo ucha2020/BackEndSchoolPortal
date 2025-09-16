@@ -61,12 +61,15 @@ block homeMain
                                 option(value= department.id, selected = department.selected) #{department.name}
 
     .add 
-        a(href= student.url + "/update_add") 
-            button Add Course
+        a(href= student.url + "/update_addCourse")  Add Course
+    .remove 
+        a(href= student.url + "/update_removeCourse")  Remove Course
 
     .add 
-        a(href="#") 
-            button Assign Course Adverser       
+        a(href=student.url + "/update_addAdvicer")  Assign Course Adverser   
+
+    .remove 
+        a(href= student.url + "/update_removeAdvicer")  Remove Course Advicer  
             
         input(type="submit", value="Update")
     button 

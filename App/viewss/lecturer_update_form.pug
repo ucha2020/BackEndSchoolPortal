@@ -2,8 +2,7 @@ extends homeLayout
 block homeMain 
 
     form(method ="post",id='form',action = `/lecturer/${lecturer.id}/update`)
-        
-        h2 Lecturer Creation
+    
         .firstNameBlock  
                 
             label(for="lecturer_firstName") firstName: 
@@ -35,14 +34,10 @@ block homeMain
             id="lecturer_dateOfEmployment",value= lecturer && lecturer.dateOfEmployment)
 
         .departmentIdBlock  
-            if departmentList && departmentList.length > 0
-                label(for="lecturer_departmentId") Select a department
-                select(name="departmentId",required,id="lecturer_departmentId") 
-                    option(value="")  --Select a faculty-
-                        each department in departmentList 
-                            li 
-                                option(value= department.id,selected = department.selected) #{department.name}
-               
+            label(for="lecturer_departmentId") Selected department
+            input(type="text", disabled name="departmentId",
+                required,id="lecturer_departmentId",value= department.id,
+                placeholder= department.name) 
         input(type="submit", value="update")
     button 
         a(href= '/lecturer')  Cancel update
