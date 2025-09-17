@@ -56,14 +56,11 @@ block homeMain
                     value= student && student.level,id='level')
 
         .departmentIdBlock  
-            if departmentList && departmentList.length > 0
-                label(for="departmentId") Select a department
-                select(name="departmentId",required,id ='departmentId') 
-                    option(value="")  --Select a faculty-
-                        each department in departmentList 
-                            li 
-                                option(value= department.id, selected = department.selected) #{department.name}
-                                                       
+            label(for="lecturer_departmentId") Selected department
+            input(type="text", hidden, name="departmentId",
+                required,id="lecturer_departmentId",value= department.id,) 
+            span.selected  : #{department.name}
+                                                                           
     button(form='form')  continue with student creation
     button
         a(href= '/student')  Cancel deparment #{student.option == 'create'? "creation": "update"}

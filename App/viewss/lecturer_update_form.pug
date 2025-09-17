@@ -35,9 +35,21 @@ block homeMain
 
         .departmentIdBlock  
             label(for="lecturer_departmentId") Selected department
-            input(type="text", disabled name="departmentId",
-                required,id="lecturer_departmentId",value= department.id,
-                placeholder= department.name) 
-        input(type="submit", value="update")
+            input(type="text", hidden, name="departmentId",
+                required,id="lecturer_departmentId",value= department.id,) 
+            span.selected  : #{department.name}
+    
+    .add 
+        a(href= lecturer.url + "/update_addCourse")  Add Course
+    .remove 
+        a(href= lecturer.url + "/update_removeCourse")  Remove Course
+
+    .add 
+        a(href=lecturer.url + "/update_addAdvicer")  Assign student   
+
+    .remove 
+        a(href= lecturer.url + "/update_removeAdvicer")  Remove student         
+        
+    input(type="submit", value="update",form="form")
     button 
         a(href= '/lecturer')  Cancel update

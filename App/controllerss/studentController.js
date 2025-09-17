@@ -104,6 +104,7 @@ exports.student_creation_form = asyncHandler(async (req, res, next) => {
     student = studentInstance(req.body);
 
     if (Array.isArray(student.grandParent)) {
+      //faculty has been selected at this stage
       const selectedFacultyId = student.grandParent[0];
       const selectedFacultyDepartments = await Department.findAll({
         where: {
@@ -112,6 +113,7 @@ exports.student_creation_form = asyncHandler(async (req, res, next) => {
       });
 
       if (selectedFacultyDepartments.length < 1) {
+        //no department exists in the selected faculty
         res.render("non_existing", {
           child: "student",
           grandParent: "faculty",
@@ -121,33 +123,31 @@ exports.student_creation_form = asyncHandler(async (req, res, next) => {
 
         return;
       } else {
-        res.render("student_creation_form", {
-          title: "student creation form",
-          departmentList: selectedFacultyDepartments,
+        //select a department for the student creation
+        const ancestryStatus = {
+          greatGrandParent: { name: "school", selected: true },
+          grandParent: { name: "faculty", selected: true },
+          parent: { name: "department", selected: true },
+          child: { name: "student" },
+        };
+        res.render("select_ancestry_form", {
+          title: "select a department for this student",
+          parentList: selectedFacultyDepartments,
+          ...ancestryStatus,
         });
         return;
       }
-    } else {
-      const selectedDepartmentId = student.departmentId;
+    } else if (Array.isArray(student.parent)) {
+      //Department has been choosen for the student creation
+      //render student creation form with the choosen department
+      const selectedDepartmentId = student.parent[0];
       const selectedDepartment = await Department.findByPk(
         selectedDepartmentId
       );
-      const selectedFacultyId = selectedDepartment.facultyId;
-      const selectedFacultyDepartments = await Department.findAll({
-        where: {
-          facultyId: selectedFacultyId,
-        },
-      });
-
-      const departmentList = checkAssociatedModelInstances(
-        selectedFacultyDepartments,
-        [selectedDepartment]
-      );
-
       res.render("student_creation_form", {
         title: "student creation form",
         student,
-        departmentList,
+        department: selectedDepartment,
       });
     }
   }
@@ -182,23 +182,14 @@ exports.student_create_formData_processor = [
           lastName: student.lastName,
         },
       });
-      let departmentList = await Department.findAll();
+      const department = await Department.findByPk(student.departmentId);
       student.option = "create";
 
       if (studentWithSameName) {
-        const studentDepartmentList = await get_Obj_array_from_id_array(
-          [student.departmentId],
-          Department
-        );
-        departmentList = checkAssociatedModelInstances(
-          departmentList,
-          studentDepartmentList
-        );
-
         res.render("student_already_existing", {
           title: "student_already_existing",
           student,
-          departmentList,
+          department,
         });
       } else {
         const newstudent = await Student.create(student);
@@ -210,63 +201,25 @@ exports.student_create_formData_processor = [
 ];
 
 exports.student_update_form = asyncHandler(async (req, res, next) => {
-  let departmentList;
-
+  let department;
   let student;
 
   if (req.method === "GET") {
     student = await Student.findByPk(req.params.id, {
       include: [Department],
     });
-    // Get ID of the faculty where the student belongs
-    const studentFacultyid = student.department.facultyId;
-    // Get all the departments associated with the faculty where the student belongs
-    departmentList = await Department.findAll({
-      where: {
-        facultyId: studentFacultyid,
-      },
-    });
+    // Get the department where the student belongs
+    department = student.department;
   } else if (req.method === "POST") {
     //Create a studentInstance with the form data
     student = studentInstance(req.body);
     student.id = req.params.id;
-    student.department = await Department.findByPk(student.departmentId);
-    // Get ID of the faculty associated with student
-    const studentFacultyid = student.department.facultyId;
-    // Get all the department associated with the faculty where the student belongs with student
-    departmentList = await Department.findAll({
-      where: {
-        facultyId: studentFacultyid,
-      },
-    });
+    department = await Department.findByPk(student.departmentId);
   }
-  //Add checked flag to each of the departments associated to the student from departmentList
-  const workedDepartmentList = checkAssociatedModelInstances(departmentList, [
-    student.department,
-  ]);
-  // Get all the lecturers in the department where the student belongs
-  // From the list of the lecturers, get all the  courses under the department where the student belongs
-  const lecturerList = await Lecturer.findAll({
-    where: {
-      departmentId: student.departmentId,
-    },
-  });
-  let studentCourseList = [];
-
-  for await (const lecturer of lecturerList) {
-    const courses = await lecturer.getCourses();
-    studentCourseList.push(courses);
-  }
-
-  studentCourseList = studentCourseList.flat();
-  studentCourseList = new Set(studentCourseList);
-  studentCourseList = Array.from(studentCourseList);
-
   res.render("student_update_form", {
     title: "student update form",
     student,
-    departmentList: workedDepartmentList,
-    studentCourseList,
+    department,
   });
 });
 
@@ -274,26 +227,9 @@ exports.student_update_addCourse_form = asyncHandler(async (req, res, next) => {
   const student = await Student.findByPk(req.params.id, {
     include: [Department],
   });
-  if (req.method === "POST") {
-    let studentCourseIds = req.body.modelIds;
-    const studentId = req.params.id;
-    //convert studentCourseIds to array if it is a string
-    if (!Array.isArray(studentCourseIds)) {
-      studentCourseIds = [studentCourseIds];
-    }
+  const courseCount = await student.countCourses();
 
-    const studentCourseList = await get_Obj_array_from_id_array(
-      studentCourseIds,
-      Course
-    );
-    await student.addCourses(studentCourseList);
-
-    res.redirect(student.url + "/display");
-
-    return;
-  }
   // Check to see that the student has not reached it course addition count limit of 10
-  const courseCount = await student.courseCount();
   if (courseCount > 9) {
     res.render("message_report", {
       message: "Maximum courseload reached for this student",
@@ -301,27 +237,52 @@ exports.student_update_addCourse_form = asyncHandler(async (req, res, next) => {
     });
     return;
   }
-  // Get all the lecturers in the department where the student belongs
-  // From the list of the lecturers, get all the  courses under the department where the student belongs
-  const lecturerList = await Lecturer.findAll({
-    where: {
-      departmentId: student.departmentId,
-    },
-  });
-  let studentCourseList = [];
 
-  for await (const lecturer of lecturerList) {
-    const courses = await lecturer.getCourses();
-    studentCourseList.push(courses);
+  if (req.method == "GET") {
+    // Get all the lecturers in the department where the student belongs
+    // From the list of the lecturers, get all the  courses under the department where the student belongs
+    const lecturerList = await Lecturer.findAll({
+      where: {
+        departmentId: student.departmentId,
+      },
+    });
+    let studentCourseList = [];
+
+    for await (const lecturer of lecturerList) {
+      const courses = await lecturer.getCourses();
+      studentCourseList.push(courses);
+    }
+
+    studentCourseList = studentCourseList.flat();
+    studentCourseList = new Set(studentCourseList);
+    //pug iterates over array and object but not set
+    studentCourseList = [...studentCourseList];
+    res.render("update_add_remove", {
+      modelList: studentCourseList,
+    });
+  } else if (req.method === "POST") {
+    let studentCourseIds = req.body.modelIds;
+    const studentId = req.params.id;
+    //convert studentCourseIds to array if it is a string
+    if (!Array.isArray(studentCourseIds)) {
+      studentCourseIds = [studentCourseIds];
+    }
+    // Check to see if the number of selected courses if more than  the allowed courses
+    if (studentCourseIds.length + courseCount > 6) {
+      res.send(
+        `You are currently not allowed to seclect more than ${6 - courseCount}
+        <button class= add> <a href="">Ok</a></button> `
+      );
+      return;
+    }
+    const studentCourseList = await get_Obj_array_from_id_array(
+      studentCourseIds,
+      Course
+    );
+    await student.addCourses(studentCourseList);
+
+    res.redirect(student.url + "/display");
   }
-
-  studentCourseList = studentCourseList.flat();
-  studentCourseList = new Set(studentCourseList);
-  //pug iterates over array and object but not set
-  studentCourseList = [...studentCourseList];
-  res.render("update_add_remove", {
-    modelList: studentCourseList,
-  });
 });
 
 exports.student_update_removeCourse_form = asyncHandler(

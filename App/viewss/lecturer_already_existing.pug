@@ -39,9 +39,10 @@ block homeMain
 
         .departmentIdBlock  
             label(for="lecturer_departmentId") Selected department
-            input(type="text", disabled name="departmentId",
-                required,id="lecturer_departmentId",value= department.id,
-                placeholder= department.name)     
+            input(type="text", hidden, name="departmentId",
+                required,id="lecturer_departmentId",value= department.id,) 
+            span.selected  : #{department.name}
+
     button(form='form')  continue with lecturer #{lecturer.option == 'create'? "creation": "update"}
     button 
-        a(href= '/lecturer  `')  Cancil lecturer #{lecturer.option == 'create'? "creation": "update"}
+        a(href= '/lecturer')  Cancil lecturer #{lecturer.option == 'create'? "creation": "update"}

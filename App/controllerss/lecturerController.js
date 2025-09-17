@@ -1,6 +1,11 @@
 const { body, validationResult } = require("express-validator");
 const { lecturerInstance } = require("../modelInstances");
-const { Faculty, Department, Lecturer } = require("../config/model_sync");
+const {
+  Faculty,
+  Department,
+  Lecturer,
+  Course,
+} = require("../config/model_sync");
 const asyncHandler = require("express-async-handler");
 const {
   checkAssociatedModelInstances,
@@ -362,9 +367,20 @@ exports.lecturer_update_removeStudent_form = asyncHandler(
 exports.lecturer_update_addCourse_form = asyncHandler(
   async (req, res, next) => {
     const lecturerId = req.params.id;
-    const lecturer = await lecturer.findByPk(lecturerId, {
+    const lecturer = await Lecturer.findByPk(lecturerId, {
       include: [Department],
     });
+    //Check to see if the lecturer has reached his/her course limit (2 courses)
+    const courseCount = await lecturer.countCourses();
+    const check = courseCount <= 2;
+    if (!check) {
+      res.render("maximum_form", {
+        model: "lecturer",
+        associate: "course",
+        count: 2,
+      });
+      return;
+    }
     if (req.method === "POST") {
       let lecturerCourseIds = req.body.modelIds;
       //convert lecturerCourseIds to array if it is a string
@@ -383,27 +399,35 @@ exports.lecturer_update_addCourse_form = asyncHandler(
       return;
     }
 
-    // Get all the courses in the department that has not been assigned upto two
-    // lecturers in that department
-
-    // Fierst, get all the courses in that department
-    const allCourses = await Course.findAll({
+    // Get all the lecturers in the department where the lecturer belongs
+    // From the list of the lecturers, get all the  courses under the department
+    const lecturerList = await Lecturer.findAll({
       where: {
         departmentId: lecturer.departmentId,
       },
     });
-    let availableCourseList = [];
+    let courseList = [];
 
-    for await (const course of allCourses) {
-      const count = await course.countLecturer();
-      if (count < 2) {
-        availableCourseList.push(course);
-      }
+    for await (const lecturer of lecturerList) {
+      const courses = await lecturer.getCourses();
+      courseList.push(courses);
     }
 
+    courseList = courseList.flat();
+    courseList = new Set(courseList);
+    //pug iterates over array and object but not set
+    courseList = [...courseList];
+    //filter the courseLIst and return courses that has not been assigned upto 2 lecturers
+    const availableCourses = [];
+    for await (const course of courseList) {
+      let courseLecturerList = await course.getLecturer();
+      courseLecturerList = [courseLecturerList];
+      if (courseLecturerList.length < 2) {
+        availableCourses.push(course);
+      }
+    }
     res.render("update_add_remove", {
-      modelList: availableCourseList,
-      nameType: "fullName",
+      modelList: availableCourses,
     });
   }
 );
