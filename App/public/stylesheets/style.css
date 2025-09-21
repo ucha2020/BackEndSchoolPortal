@@ -76,7 +76,13 @@ header h1 {
 }
 
 .courseStudentsblock a,
-.studentCoursesblock a {
+.studentCoursesblock a,
+.facultyDepartmentsblock a,
+.departmentLecturersblock a,
+.departmentStudentsblock a,
+.lecturerCoursesblock a,
+.lecturerStudentsblock a,
+.courseLecturersblock a {
   color: black;
   padding: 12px 18px;
   text-decoration: none;
@@ -85,7 +91,13 @@ header h1 {
 }
 
 .courseStudentsblock li,
-.studentCoursesblock li {
+.courseLecturersblock li,
+.studentCoursesblock li,
+.facultyDepartmentsblock li,
+.departmentLecturersblock li,
+.departmentStudentsblock li,
+.lecturerCoursesblock li,
+.lecturerStudentsblock li {
   position: relative;
 }
 
@@ -178,4 +190,12 @@ span[class="selected"] {
   padding-block: 1px;
   padding-inline: 2px;
   margin: 5px;
+}
+span[class="downArrow"] {
+  display: inline-block;
+  width: 0px;
+  height: 0px;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 12px solid;
 }

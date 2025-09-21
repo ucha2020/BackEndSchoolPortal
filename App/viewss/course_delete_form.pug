@@ -1,8 +1,0 @@
-extends homeLayout 
-block homeMain 
-    h1 #{course.name}
-    p Do you really want to delete this Course 
-    form(method= 'post')
-        input(type="hidden", name="courseId", value= course.id)
-        button(type="submit") Delete
-         

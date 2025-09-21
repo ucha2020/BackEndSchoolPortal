@@ -58,7 +58,11 @@ block homeMain
             span.selected  : #{department.name}
                             
     .add 
+        a(href= student.url + "/update_courseAdviser")  Add/Change course adviser
+    
+    .add 
         a(href= student.url + "/update_addCourse")  Add Course
+
     .remove 
         a(href= student.url + "/update_removeCourse")  Remove Course
       

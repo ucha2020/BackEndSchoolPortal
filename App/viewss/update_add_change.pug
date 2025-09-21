@@ -14,6 +14,14 @@ block homeMain
                             input(type="checkbox", name="modelIds", 
                                 id=model.title,value=model.id,)
                             strong #{model[name]} 
+             if parentList && parentList.length > 0
+                label(for="parent") Select a #{parent.name}
+                select(name="parent",required,id = "parent") 
+                    option(value="")  --Select a #{parent.name}
+                    each model in parentList 
+                        li 
+                            option(value= model.id) #{parent.name=="lecturer"||parent.name=="student"?model.fullName:model.name}
+      
 
                 
                 button(type="submit") Submit

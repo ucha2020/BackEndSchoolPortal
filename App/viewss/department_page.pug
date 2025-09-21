@@ -22,6 +22,35 @@ block homeMain
                         span.value  
                             a(href= `${faculty.url}/display`) #{faculty.name} 
 
+                .departmentStudentsblock
+                    .dropdown
+                        a(href="#")  
+                            strong   Students under this department:
+                            span &#8650
+                            span.downArrow 
+                        ul.dropdown_menu 
+                            each student in studentList  
+                                li
+                                    a(href=`${student.url}/display`) 
+                                        strong #{ student.fullName}
+                            else 
+                                li No student under this department currently
+
+                .departmentLecturersblock
+                    .dropdown
+                        a(href="#")  
+                            strong  Lecturers under this department:
+                            span &#8628
+                            span.downArrow  
+                        ul.dropdown_menu 
+                            each lecturer in lecturerList 
+                                li
+                                    a(href=`${lecturer.url}/display`) 
+                                        strong #{ lecturer.fullName}
+                            else 
+                                li No lecturer under this department currently
+        
+                .downArrow
                 .editblock 
                     .deleteblock 
                         button.delete_btn

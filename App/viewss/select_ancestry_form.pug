@@ -1,21 +1,25 @@
 .selectGrandParent 
     //-
         h2 = { 'select a ' 
-                greatGrandParent.name != "school" 
+                greatGrandParent
+                ? // Is either any of the model but not department or faculty
+                    greatGrandParent.name != "school" 
                 
-                ? //Course creation
-                    parent.selected &&  parent.name ||
-                    grandParent.selected &&  grandParent.name || 
-                    greatGrandParent.selected &&  greatGrandParent.name  
+                    ? //Course creation
+                        parent.selected &&  parent.name ||
+                        grandParent.selected &&  grandParent.name || 
+                        greatGrandParent.selected &&  greatGrandParent.name  
                 
-                : //Any other model not course                 
-                    parent.selected &&  parent.name ||
-                    grandParent.selected &&  grandParent.name 
+                    : //Any other model not course                 
+                        parent.selected &&  parent.name ||
+                        grandParent.selected &&  grandParent.name 
 
-            ' for this' child.name
+                : // Department creation
+                    parent.name
+                ' for this' child.name
         }
 
-    h2 select a #{ greatGrandParent.name != "school" ? parent.selected &&  parent.name || grandParent.selected &&  grandParent.name || greatGrandParent.selected &&  greatGrandParent.name  : parent.selected &&  parent.name || grandParent.selected &&  grandParent.name }  for this #{child.name}
+    h2 select a #{  greatGrandParent ? greatGrandParent.name != "school" ? parent.selected &&  parent.name || grandParent.selected &&  grandParent.name || greatGrandParent.selected &&  greatGrandParent.name  : parent.selected &&  parent.name || grandParent.selected &&  grandParent.name : parent.name}  for this #{child.name}
   
     form(method="post",action='/' + child.name + '/create_edit')
         .greatGrandParentListBlock 

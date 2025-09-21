@@ -31,17 +31,14 @@ block homeMain
                     p
                         strong.name  Course Adviser:  
                         span.value  
-                            a(href= lecturer && `${lecturer.url}/display`) #{lecturer?lecturer.fullName : "No assigned course adviser yet"}
-                .infoUnit
-                    p
-                        strong.name  Student Courses:  
-                        span.value  
-                            a(href)  Student Course Details
+                            a(href= courseAdviser && `${courseAdviser.url}/display`) #{courseAdviser?courseAdviser.fullName : "No assigned course adviser yet"}
 
                 .studentCoursesblock
                     .dropdown
                         a(href="#")  
-                            strong Student's  Courses :
+                            strong Student's  Courses 
+                            span &#8650
+                            span.downArrow
                         ul.dropdown_menu 
                             each course in courses 
                                 li

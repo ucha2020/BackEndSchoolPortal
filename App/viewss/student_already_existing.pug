@@ -61,7 +61,7 @@ block homeMain
                 required,id="lecturer_departmentId",value= department.id,) 
             span.selected  : #{department.name}
                                                                            
-    button(form='form')  continue with student creation
+    button(form='form')  continue with student #{student.option == 'create'? "creation": "update"}
     button
-        a(href= '/student')  Cancel deparment #{student.option == 'create'? "creation": "update"}
+        a(href= '/student')  Cancel student #{student.option == 'create'? "creation": "update"}
 

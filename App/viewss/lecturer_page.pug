@@ -28,6 +28,34 @@ block homeMain
                         span.value  
                             a(href= `${department.url}/display`) #{department.name}
                 
+                .lecturerCoursesblock
+                    .dropdown
+                        a(href="#")  
+                            strong Courses  under this lecturer
+                            span &#8650
+                            span.downArrow 
+                        ul.dropdown_menu 
+                            each course in courseList 
+                                li
+                                    a(href=`${course.url}/display`) 
+                                        strong #{ course.name}
+                            else 
+                                li No student under this lecturer currently
+                
+                .lecturerStudentsblock
+                    .dropdown
+                        a(href="#")  
+                            strong   Students under this lecturer
+                            span &#8650
+                            span.downArrow 
+                        ul.dropdown_menu 
+                            each student in studentList  
+                                li
+                                    a(href=`${student.url}/display`) 
+                                        strong #{ student.fullName}
+                            else 
+                                li No student under this lecturer currently
+                
                 .contactInfoblock 
                     h3  Lecturer contact info drop down
                 .editblock 

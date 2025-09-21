@@ -16,12 +16,15 @@ block homeMain
                                         span.value  #{value}
 
             .sideblock
-                .infoUnit
-                    p
-                        strong.name  faculty:  
-                        span.value  
-                            a(href= `${faculty.url}/display`) #{faculty.name} 
-
+                .facultyDepartmentsblock
+                    .dropdown
+                        a(href="#")  
+                            strong Department under this faculty :
+                        ul.dropdown_menu 
+                            each department in departmentList 
+                                li
+                                    a(href=`${department.url}/display`) 
+                                        strong #{ department.name}
                 .editblock 
                     .deleteblock 
                         button.delete_btn

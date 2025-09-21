@@ -13,7 +13,7 @@ block homeMain
             input(type="text", name="name",
                 value= faculty && faculty.name,id="facultyName")  
     
-    button(type="submit",form='form')  continue with faculty creation
+    button(type="submit",form='form')  continue with faculty #{faculty.option == 'create'? "creation": "update"}
     button(type="submit") 
         a(href= '/faculty')  Cancel faculty #{faculty.option == 'create'? "creation": "update"}
 

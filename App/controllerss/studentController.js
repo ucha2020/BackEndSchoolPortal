@@ -12,32 +12,41 @@ const {
   checkAssociatedModelInstances,
   get_Obj_array_from_id_array,
 } = require("../resources/libary");
+const { ur } = require("@faker-js/faker");
+const { where, Op } = require("sequelize");
 
 exports.student_page = asyncHandler(async (req, res, next) => {
   const student = await Student.findByPk(req.params.id, {
-    include: [Department, Lecturer, Course],
+    include: [Department, "courseAdvicer", Course],
   });
 
   const studentRaw = await Student.findByPk(req.params.id, {
     raw: true,
     attributes: {
-      exclude: ["createdAt", "updatedAt", "departmentId", "lecturerId", "id"],
+      exclude: [
+        "courseAdvicerId",
+        "createdAt",
+        "updatedAt",
+        "departmentId",
+        "lecturerId",
+        "id",
+      ],
     },
   });
 
-  const studentDeparment = student.department;
-  const studentLecturer = student.lecturer;
-  const studentFaculty = await Faculty.findByPk(studentDeparment.facultyId);
-  const studentCourseList = await student.getCourses();
+  const department = student.department;
+  const courseAdvicer = student.courseAdvicer;
+  const faculty = await Faculty.findByPk(department.facultyId);
+  const courseList = await student.courses;
   const url = student.url;
-  studentRaw.regNo = "0" + studentFaculty.id + studentDeparment.id + student.id;
+  studentRaw.regNo = "0" + faculty.id + "0" + department.id + student.id;
   res.render("student_page", {
     title: "student Display Page",
     student: studentRaw,
-    department: studentDeparment,
-    faculty: studentFaculty,
-    lecturer: studentLecturer,
-    courses: studentCourseList,
+    department,
+    faculty,
+    courseAdvicer,
+    courses: courseList,
     url,
   });
 });
@@ -228,60 +237,73 @@ exports.student_update_addCourse_form = asyncHandler(async (req, res, next) => {
     include: [Department],
   });
   const courseCount = await student.countCourses();
-
-  // Check to see that the student has not reached it course addition count limit of 10
-  if (courseCount > 9) {
-    res.render("message_report", {
-      message: "Maximum courseload reached for this student",
-      url: student.url + "/update",
-    });
-    return;
-  }
-
   if (req.method == "GET") {
+    // Check to see that the student has not reached it course addition count limit of 10
+    if (courseCount > 8) {
+      res.render("maximum_form", {
+        model: "student",
+        associate: "course",
+        count: 9,
+        url: student.url + "/update",
+      });
+      return;
+    }
     // Get all the lecturers in the department where the student belongs
-    // From the list of the lecturers, get all the  courses under the department where the student belongs
+    // From the list of the lecturers, get all the  courses under that department
     const lecturerList = await Lecturer.findAll({
       where: {
         departmentId: student.departmentId,
       },
     });
-    let studentCourseList = [];
+    let courseList = [];
 
     for await (const lecturer of lecturerList) {
       const courses = await lecturer.getCourses();
-      studentCourseList.push(courses);
+      courseList.push(courses);
     }
-
-    studentCourseList = studentCourseList.flat();
-    studentCourseList = new Set(studentCourseList);
+    courseList = courseList.flat();
+    //Filter the courseList to remove the courses already assigned to the student
+    const studentCourseList = await student.getCourses();
+    const studentCourseIdList = studentCourseList.map((studentCourse) => {
+      return studentCourse.id;
+    });
+    courseList = courseList.filter((course) => {
+      return !studentCourseIdList.includes(course.id);
+    });
+    //Remove duplicates
+    courseList = new Set(courseList);
     //pug iterates over array and object but not set
-    studentCourseList = [...studentCourseList];
+    courseList = [...courseList];
     res.render("update_add_remove", {
-      modelList: studentCourseList,
+      modelList: courseList,
+      maximumCount: 9 - courseCount,
+      parentModel: { name: "student", url: student.url },
+      associateModel: "course",
+      actionType: "add",
     });
   } else if (req.method === "POST") {
-    let studentCourseIds = req.body.modelIds;
-    const studentId = req.params.id;
-    //convert studentCourseIds to array if it is a string
-    if (!Array.isArray(studentCourseIds)) {
-      studentCourseIds = [studentCourseIds];
+    let courseIds = req.body.modelIds;
+    //check to see if no course was selected
+    if (!courseIds) {
+      res.redirect(student.url + "/update");
+      return;
     }
-    // Check to see if the number of selected courses if more than  the allowed courses
-    if (studentCourseIds.length + courseCount > 6) {
+    //convert studentCourseIds to array if it is a string
+    if (!Array.isArray(courseIds)) {
+      courseIds = [courseIds];
+    }
+    // Check to see if the number of selected courses is more than the allowed courses per that student
+    if (courseIds.length + courseCount > 9) {
       res.send(
-        `You are currently not allowed to seclect more than ${6 - courseCount}
+        `You are currently not allowed to select more than ${9 - courseCount}
         <button class= add> <a href="">Ok</a></button> `
       );
       return;
     }
-    const studentCourseList = await get_Obj_array_from_id_array(
-      studentCourseIds,
-      Course
-    );
-    await student.addCourses(studentCourseList);
+    const courseList = await get_Obj_array_from_id_array(courseIds, Course);
+    await student.addCourses(courseList);
 
-    res.redirect(student.url + "/display");
+    res.redirect(student.url + "/update");
   }
 });
 
@@ -289,30 +311,66 @@ exports.student_update_removeCourse_form = asyncHandler(
   async (req, res, next) => {
     const student = await Student.findByPk(req.params.id);
 
-    if (req.method === "POST") {
-      let studentCourseIds = req.body.modelIds;
-      const studentId = req.params.id;
+    if (req.method === "GET") {
+      // Get all the courses the student offers
+      const courseList = await student.getCourses();
+      res.render("update_add_remove", {
+        modelList: courseList,
+        parentModel: { name: "student", url: student.url },
+        associateModel: "course",
+        actionType: "remove",
+      });
+    } else if (req.method === "POST") {
+      let courseIds = req.body.modelIds;
       //convert studentCourseIds to array if it is a string
-      if (!Array.isArray(studentCourseIds)) {
-        studentCourseIds = [studentCourseIds];
+      if (!Array.isArray(courseIds)) {
+        courseIds = [courseIds];
       }
 
-      const studentCourseList = await get_Obj_array_from_id_array(
-        studentCourseIds,
-        Course
-      );
-      await student.removeCourses(studentCourseList);
+      const courseList = await get_Obj_array_from_id_array(courseIds, Course);
+      await student.removeCourses(courseList);
 
-      res.redirect(student.url + "/display");
+      res.redirect(student.url + "/update");
 
       return;
     }
+  }
+);
+exports.student_update_courseAdviser_form = asyncHandler(
+  async (req, res, next) => {
+    if (req.method == "GET") {
+      const student = await Student.findByPk(req.params.id);
+      //Get all the lecturers in that department,
+      // filter the list to return only lecturers bellow level "4"
+      let lecturerList = await Lecturer.findAll({
+        where: {
+          level: {
+            [Op.lte]: 3,
+          },
+        },
+      });
 
-    // Get all the courses the student offers
-    const studentCourseList = await student.getCourses();
-    res.render("update_add_remove", {
-      modelList: studentCourseList,
-    });
+      // Filter the list further to return lecturers
+      // who have not reached their student assignment limit
+      const availableList = [];
+      for await (const lecturer of lecturerList) {
+        const count = await lecturer.countStudents();
+        if (count < 5) {
+          availableList.push(lecturer);
+        }
+      }
+
+      lecturerList = availableList;
+
+      lecturerList = lecturerList.filter((lecturer) => {});
+
+      //Check to see if the student already has a courseAdviser
+      if (student.courseAdvicer) {
+        //Changing courseAdviser mode
+      } else {
+        //Adding courseAdviser mode
+      }
+    }
   }
 );
 
@@ -339,15 +397,7 @@ exports.student_update_formData_processor = [
     } else {
       //The data is valid at this point
       student.id = req.params.id;
-      student.department = await Department.findByPk(student.departmentId);
-      // Get ID of the faculty associated with student
-      const studentFacultyid = student.department.facultyId;
-      // Get all the department associated with the faculty where the student belongs with student
-      const departmentList = await Department.findAll({
-        where: {
-          facultyId: studentFacultyid,
-        },
-      });
+      const department = await Department.findByPk(student.departmentId);
 
       //Check if a student with the same name already exists in the database
       const studentWithSameName = await Student.findOne({
@@ -357,17 +407,12 @@ exports.student_update_formData_processor = [
         },
       });
       if (studentWithSameName && studentWithSameName.id != req.params.id) {
-        const workedDepartmentList = checkAssociatedModelInstances(
-          departmentList,
-          [student.department]
-        );
-
         student.option = req.params.id + "/update";
 
         res.render("student_already_existing", {
           title: "student_already_existing",
           student,
-          departmentList: workedDepartmentList,
+          department,
         });
       } else {
         await Student.update(student, {
@@ -386,9 +431,10 @@ exports.student_update_formData_processor = [
 exports.student_delete_form = asyncHandler(async (req, res, next) => {
   const student = await Student.findByPk(req.params.id);
   if (req.method === "GET") {
-    res.render("student_delete_form", {
+    res.render("delete_form", {
       title: "student delete form",
-      student,
+      model: student,
+      nameType: "fullName",
     });
     return;
   }

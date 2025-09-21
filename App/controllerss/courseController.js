@@ -12,6 +12,7 @@ const {
   Lecturer,
   Student,
 } = require("../config/model_sync");
+const { model } = require("mongoose");
 
 exports.courses_page = asyncHandler(async (req, res, next) => {
   const courses = await Course.findAll();
@@ -23,7 +24,7 @@ exports.courses_page = asyncHandler(async (req, res, next) => {
 
 exports.course_page = asyncHandler(async (req, res, next) => {
   const course = await Course.findByPk(req.params.id, {
-    include: [Lecturer],
+    include: Lecturer,
   });
 
   const { name, title, level, creditUnit, id, url } = course;
@@ -34,24 +35,20 @@ exports.course_page = asyncHandler(async (req, res, next) => {
     creditUnit,
   };
 
-  const courseLecturer = course.lecturer;
-  const courseDepartment = await Department.findByPk(
-    courseLecturer.departmentId
-  );
-  const courseFaculty = await Faculty.findByPk(courseDepartment.facultyId);
-  const courseStudents = await course.getStudents();
+  const lecturerList = await course.getLecturers();
+  const department = await Department.findByPk(lecturerList[0].departmentId);
+  const faculty = await Faculty.findByPk(department.facultyId);
+  const studentList = await course.getStudents();
 
-  //const url = course.url;
-  courseRaw.courseCode =
-    "0" + courseFaculty.id + courseDepartment.id + courseLecturer.id + id;
+  courseRaw.courseCode = "0" + faculty.id + department.id + id + "d";
 
   res.render("course_page", {
     title: "course Display Page",
     course: courseRaw,
-    faculty: courseFaculty,
-    department: courseDepartment,
-    lecturer: courseLecturer,
-    studentList: courseStudents,
+    faculty,
+    department,
+    lecturerList,
+    studentList,
     url,
   });
 });
@@ -224,6 +221,15 @@ exports.course_creation_form = asyncHandler(async (req, res, next) => {
         title: "course creation form",
         lecturer,
       });
+    } else if (course) {
+      // This course details is coming from "already existing form"
+      const lecturer = await Lecturer.findByPk(course.lecturerId);
+
+      res.render("course_creation_form", {
+        title: "course creation form",
+        course,
+        lecturer,
+      });
     }
   }
 });
@@ -267,7 +273,9 @@ exports.course_create_formData_processor = [
         });
       } else {
         const newcourse = await Course.create(course);
+        await newcourse.addLecturers(lecturer);
         //redirect to course page
+
         res.redirect(newcourse.url + "/display");
       }
     }
@@ -345,7 +353,7 @@ exports.course_update_form = asyncHandler(async (req, res, next) => {
   res.render("course_update_form", {
     title: "course update form",
     course,
-    lecturerList: workedLecturerList,
+    lecturer,
   });
 });
 
@@ -353,9 +361,9 @@ exports.course_delete_form = asyncHandler(async (req, res, next) => {
   if (req.method === "GET") {
     const course = await Course.findByPk(req.params.id);
 
-    res.render("course_delete_form", {
+    res.render("delete_form", {
       title: "course delete form",
-      course,
+      model: course,
     });
     return;
   }

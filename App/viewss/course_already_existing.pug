@@ -36,6 +36,6 @@ block homeMain
                 required,id="course_lecturerId",value= lecturer.id,) 
             span.selected  : #{lecturer.fullName}
             
-    button(type="submit",form = "form") Continue with course creation
+    button(type="submit",form = "form") Continue with course #{course.option == "create" ? "creation" : "update"} 
     button(type="submit") 
-            a(href= '/course')  Cancel course creation
+            a(href= '/course')  Cancel course #{course.option == "create" ? "creation" : "update"}

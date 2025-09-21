@@ -41,14 +41,12 @@ block homeMain
     
     .add 
         a(href= lecturer.url + "/update_addCourse")  Add Course
-    .remove 
-        a(href= lecturer.url + "/update_removeCourse")  Remove Course
-
+   
     .add 
-        a(href=lecturer.url + "/update_addAdvicer")  Assign student   
+        a(href=lecturer.url + "/update_addStudent")  Assign student   
 
     .remove 
-        a(href= lecturer.url + "/update_removeAdvicer")  Remove student         
+        a(href= lecturer.url + "/update_removeStudent")  Remove student         
         
     input(type="submit", value="update",form="form")
     button 

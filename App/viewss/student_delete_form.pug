@@ -1,8 +1,0 @@
-extends homeLayout 
-block homeMain 
-    h1 #{student.fullName}
-    p Do you really want to delete this student 
-    form(method= "post")
-        input(type="hidden", name="studentId", value= student.id)
-        button(type="submit") Delete
-         

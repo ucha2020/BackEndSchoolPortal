@@ -27,11 +27,15 @@ block homeMain
                         strong.name  Department:  
                         span.value  
                             a(href= `${department.url}/display`) #{department.name}
-                .infoUnit
-                    p
-                        strong.name  Course lecturer:  
-                        span.value  
-                            a(href= `${lecturer.url}/display`) #{lecturer.fullName }
+                
+                .courseLecturersblock
+                    .dropdown
+                        a(href="#")  Course lecturer(s):
+                        ul.dropdown_menu 
+                            each lecturer in lecturerList 
+                                li
+                                    a(href=`${lecturer.url}/display`) #{ lecturer.fullName}
+  
                 
                 .courseStudentsblock
                     .dropdown

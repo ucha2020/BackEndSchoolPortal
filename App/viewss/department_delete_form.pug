@@ -1,8 +1,0 @@
-extends homeLayout 
-block homeMain 
-    h1 #{department.name}
-    p Do you really want to delete this department 
-    form(method= "post")
-        input(type="hidden", name="departmentId", value= department.id)
-        button(type="submit") Delete
-         

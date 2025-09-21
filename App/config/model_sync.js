@@ -23,15 +23,46 @@ const Student_Course = sequelize.define("Student_Course", {
   },
 });
 
+const Lecturer_Course = sequelize.define("Lecturer_Course", {
+  lecturerId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Lecturer,
+      key: "id",
+    },
+  },
+  courseId: {
+    type: DataTypes.INTEGER,
+    references: {
+      model: Course,
+      key: "id",
+    },
+  },
+});
+
 Faculty.hasMany(Department, {
   foreignKey: {
     allowNull: false,
   },
   onDelete: "RESTRICT",
 });
+Faculty.hasOne(Lecturer, {
+  as: "dean",
+  foreignKey: {
+    allowNull: true,
+  },
+  onDelete: "RESTRICT",
+});
 Department.belongsTo(Faculty);
 
 Department.hasMany(Lecturer, {
+  foreignKey: {
+    allowNull: false,
+  },
+  onDelete: "RESTRICT",
+});
+Department.hasOne(Lecturer, {
+  as: "HOD",
   foreignKey: {
     allowNull: true,
   },
@@ -57,20 +88,25 @@ Course.belongsTo(Lecturer);
 Lecturer.hasMany(Student, {
   foreignKey: {
     allowNull: true,
+    name: "courseAdviserId",
   },
 });
-Student.belongsTo(Lecturer);
+Student.belongsTo(Lecturer, { as: "courseAdviser" });
 
 Student.belongsToMany(Course, { through: Student_Course });
 Course.belongsToMany(Student, { through: Student_Course });
 
+Lecturer.belongsToMany(Course, { through: Lecturer_Course });
+Course.belongsToMany(Lecturer, { through: Lecturer_Course });
+
 async () => {
-  const fac = await Faculty.sync({ force: true });
-  const dep = await Department.sync({ force: true });
-  const lec = await Lecturer.sync({ force: true });
   const cou = await Course.sync({ force: true });
-  const stu = await Student.sync({ force: true });
+  const lec = await Lecturer.sync({ force: true });
+  const lec_cou = await Lecturer_Course.sync({ force: true });
   const stu_cou = await Student_Course.sync({ force: true });
+  const stu = await Student.sync({ force: true });
+  const dep = await Department.sync({ force: true });
+  const fac = await Faculty.sync({ force: true });
   const tst = 54;
 };
 module.exports = { Lecturer, Course, Faculty, Department, Student };

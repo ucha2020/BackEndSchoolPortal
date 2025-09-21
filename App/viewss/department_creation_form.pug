@@ -15,15 +15,11 @@ block homeMain
                 disabled, value= department && department.departmentNameError)    
 
         .facultyIdBlock  
-            if facultyList && facultyList.length > 0
-                label(for="facultyId") Select a faculty
-                select(name="facultyId",required,id = "facultyId") 
-                    option(value="")  --Select a faculty-
-                    each faculty in facultyList 
-                        li 
-        
-                            option(value= faculty.id ,selected = faculty.selected) #{faculty.name}
-   
+            label(for="course_facultyId") Selected faculty
+            input(type="text", hidden, name="facultyId",
+                required,id="course_facultyId",value= faculty.id,) 
+            span.selected  : #{faculty.name}
+            
         .errorField
             label(for="facultyIdError") 
             input(type="text",id = "facultyIdError",hidden= !isErrorInfacultyId,

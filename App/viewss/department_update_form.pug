@@ -14,14 +14,10 @@ block homeMain
                     disabled, value= department && department.nameError)
            
         .facultyIdBlock  
-            if facultyList && facultyList.length > 0
-                label(for="facultyId") Select a faculty
-                select(name="facultyId",required,id = "facultyId") 
-                    option(value="")  --Select a faculty-
-                    each faculty in facultyList 
-                        li 
-                            option(value= faculty.id, selected = faculty.selected ) #{faculty.name}
-        
+            label(for="course_facultyId") Selected faculty
+            input(type="text", hidden, name="facultyId",
+                required,id="course_facultyId",value= faculty.id,) 
+            span.selected  : #{faculty.name}
         
     button(type="submit",form = "form") Update department
     button(type="submit") 
