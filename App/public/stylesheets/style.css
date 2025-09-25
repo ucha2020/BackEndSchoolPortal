@@ -82,6 +82,7 @@ header h1 {
 .departmentStudentsblock a,
 .lecturerCoursesblock a,
 .lecturerStudentsblock a,
+.courseLecturersblock a,
 .courseLecturersblock a {
   color: black;
   padding: 12px 18px;
@@ -97,7 +98,8 @@ header h1 {
 .departmentLecturersblock li,
 .departmentStudentsblock li,
 .lecturerCoursesblock li,
-.lecturerStudentsblock li {
+.lecturerStudentsblock li,
+.courseLecturersblock li {
   position: relative;
 }
 
@@ -198,4 +200,23 @@ span[class="downArrow"] {
   border-left: 5px solid transparent;
   border-right: 5px solid transparent;
   border-top: 12px solid;
+}
+.currentLevel {
+  display: inline-block;
+  background-color: orange;
+  color: darkblue;
+  font-weight: 600;
+  font-size: 14px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #d0dfff;
+  box-shadow: 0 1px 3px rgba(255, 165, 0, 0.05);
+  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+  transition: all 0.2s ease-in-out;
+}
+
+.nice-label:hover {
+  background-color: #dbe7ff;
+  color: #1a2a3a;
+  border-color: #aac8ff;
 }

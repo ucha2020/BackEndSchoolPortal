@@ -78,13 +78,6 @@ Department.hasMany(Student, {
 });
 Student.belongsTo(Department);
 
-Lecturer.hasMany(Course, {
-  foreignKey: {
-    allowNull: false,
-  },
-});
-Course.belongsTo(Lecturer);
-
 Lecturer.hasMany(Student, {
   foreignKey: {
     allowNull: true,

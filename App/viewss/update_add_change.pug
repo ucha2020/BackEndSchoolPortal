@@ -1,27 +1,17 @@
 extends homeLayout 
 block homeMain 
-    - const name =  nameType || "name"
     form( method="post")
         fieldset
-            if modelList.length < 1
-                legend No available #{associateModel} to be #{actionType =="add" ? "added to": "remove from"} this #{parentModel.name}  
-                a(href= parentModel.url + "/update") Ok
-            else
-                legend Choose #{associateModel}(s) to be #{actionType =="add" ? "added to this "+ parentModel.name + " (maximum of " + maximumCount + ") ": "remove from this " + parentModel.name}  
-                each model in modelList 
+            legend Add/Change Lecturer's Level
+            div
+                each level in levelList 
                     .infoUnit
-                        label(for=model.title) 
-                            input(type="checkbox", name="modelIds", 
-                                id=model.title,value=model.id,)
-                            strong #{model[name]} 
-             if parentList && parentList.length > 0
-                label(for="parent") Select a #{parent.name}
-                select(name="parent",required,id = "parent") 
-                    option(value="")  --Select a #{parent.name}
-                    each model in parentList 
-                        li 
-                            option(value= model.id) #{parent.name=="lecturer"||parent.name=="student"?model.fullName:model.name}
-      
-
-                
-                button(type="submit") Submit
+                        label(for=level)
+                            input(type="radio", name="level", 
+                                id=level,value=level,
+                                checked = presentLevel == level,
+                                required = level == 1)
+                            strong #{level} 
+                            if (presentLevel == level)
+                                span.currentLevel  Current level
+            button(type="submit") Submit

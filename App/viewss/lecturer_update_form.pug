@@ -40,7 +40,13 @@ block homeMain
             span.selected  : #{department.name}
     
     .add 
+        a(href= lecturer.url + "/update_add_changeLevel")  Add/Change level
+    
+    .add 
         a(href= lecturer.url + "/update_addCourse")  Add Course
+
+    .add 
+        a(href= lecturer.url + "/update_removeCourse")  Remove Course
    
     .add 
         a(href=lecturer.url + "/update_addStudent")  Assign student   

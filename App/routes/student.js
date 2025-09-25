@@ -22,16 +22,6 @@ route.get("/:id/update_removeCourse", student.student_update_removeCourse_form);
 route.post("/:id/update_addCourse", student.student_update_addCourse_form);
 
 route.post(
-  "/:id/update_courseAdviser",
-  student.student_update_courseAdviser_form
-);
-
-route.get(
-  "/:id/update_courseAdviser",
-  student.student_update_courseAdviser_form
-);
-
-route.post(
   "/:id/update_removeCourse",
   student.student_update_removeCourse_form
 );

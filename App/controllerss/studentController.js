@@ -14,17 +14,18 @@ const {
 } = require("../resources/libary");
 const { ur } = require("@faker-js/faker");
 const { where, Op } = require("sequelize");
+const { findByPk } = require("sequelize/lib/model");
 
 exports.student_page = asyncHandler(async (req, res, next) => {
   const student = await Student.findByPk(req.params.id, {
-    include: [Department, "courseAdvicer", Course],
+    include: [Department, "courseAdviser", Course],
   });
 
   const studentRaw = await Student.findByPk(req.params.id, {
     raw: true,
     attributes: {
       exclude: [
-        "courseAdvicerId",
+        "courseAdviserId",
         "createdAt",
         "updatedAt",
         "departmentId",
@@ -35,7 +36,7 @@ exports.student_page = asyncHandler(async (req, res, next) => {
   });
 
   const department = student.department;
-  const courseAdvicer = student.courseAdvicer;
+  const courseAdviser = student.courseAdviser;
   const faculty = await Faculty.findByPk(department.facultyId);
   const courseList = await student.courses;
   const url = student.url;
@@ -45,7 +46,7 @@ exports.student_page = asyncHandler(async (req, res, next) => {
     student: studentRaw,
     department,
     faculty,
-    courseAdvicer,
+    courseAdviser,
     courses: courseList,
     url,
   });
@@ -233,9 +234,7 @@ exports.student_update_form = asyncHandler(async (req, res, next) => {
 });
 
 exports.student_update_addCourse_form = asyncHandler(async (req, res, next) => {
-  const student = await Student.findByPk(req.params.id, {
-    include: [Department],
-  });
+  const student = await Student.findByPk(req.params.id);
   const courseCount = await student.countCourses();
   if (req.method == "GET") {
     // Check to see that the student has not reached it course addition count limit of 10
@@ -244,7 +243,7 @@ exports.student_update_addCourse_form = asyncHandler(async (req, res, next) => {
         model: "student",
         associate: "course",
         count: 9,
-        url: student.url + "/update",
+        url: student.url + "/update_addCourse",
       });
       return;
     }
@@ -262,18 +261,23 @@ exports.student_update_addCourse_form = asyncHandler(async (req, res, next) => {
       courseList.push(courses);
     }
     courseList = courseList.flat();
+    let courseIdList = courseList.map((course) => {
+      return course.id;
+    });
     //Filter the courseList to remove the courses already assigned to the student
     const studentCourseList = await student.getCourses();
     const studentCourseIdList = studentCourseList.map((studentCourse) => {
       return studentCourse.id;
     });
-    courseList = courseList.filter((course) => {
-      return !studentCourseIdList.includes(course.id);
+    courseIdList = courseIdList.filter((courseId) => {
+      return !studentCourseIdList.includes(courseId);
     });
     //Remove duplicates
-    courseList = new Set(courseList);
+    courseIdList = new Set(courseIdList);
     //pug iterates over array and object but not set
-    courseList = [...courseList];
+    courseIdList = [...courseIdList];
+    courseList = await get_Obj_array_from_id_array(courseIdList, Course);
+
     res.render("update_add_remove", {
       modelList: courseList,
       maximumCount: 9 - courseCount,
@@ -285,7 +289,7 @@ exports.student_update_addCourse_form = asyncHandler(async (req, res, next) => {
     let courseIds = req.body.modelIds;
     //check to see if no course was selected
     if (!courseIds) {
-      res.redirect(student.url + "/update");
+      res.redirect(student.url + "update_addCourse");
       return;
     }
     //convert studentCourseIds to array if it is a string
@@ -333,43 +337,6 @@ exports.student_update_removeCourse_form = asyncHandler(
       res.redirect(student.url + "/update");
 
       return;
-    }
-  }
-);
-exports.student_update_courseAdviser_form = asyncHandler(
-  async (req, res, next) => {
-    if (req.method == "GET") {
-      const student = await Student.findByPk(req.params.id);
-      //Get all the lecturers in that department,
-      // filter the list to return only lecturers bellow level "4"
-      let lecturerList = await Lecturer.findAll({
-        where: {
-          level: {
-            [Op.lte]: 3,
-          },
-        },
-      });
-
-      // Filter the list further to return lecturers
-      // who have not reached their student assignment limit
-      const availableList = [];
-      for await (const lecturer of lecturerList) {
-        const count = await lecturer.countStudents();
-        if (count < 5) {
-          availableList.push(lecturer);
-        }
-      }
-
-      lecturerList = availableList;
-
-      lecturerList = lecturerList.filter((lecturer) => {});
-
-      //Check to see if the student already has a courseAdviser
-      if (student.courseAdvicer) {
-        //Changing courseAdviser mode
-      } else {
-        //Adding courseAdviser mode
-      }
     }
   }
 );

@@ -14,9 +14,7 @@ const {
 } = require("../resources/libary");
 
 exports.lecturer_page = asyncHandler(async (req, res, next) => {
-  const lecturer = await Lecturer.findByPk(req.params.id, {
-    include: [Department, Course],
-  });
+  const lecturer = await Lecturer.findByPk(req.params.id);
 
   const {
     firstName,
@@ -26,6 +24,7 @@ exports.lecturer_page = asyncHandler(async (req, res, next) => {
     gender,
     id,
     url,
+    level,
   } = lecturer;
   const lecturerLite = {
     firstName,
@@ -33,20 +32,20 @@ exports.lecturer_page = asyncHandler(async (req, res, next) => {
     dateOfEmployment,
     dateOfBirth,
     gender,
+    level,
   };
 
-  const lecturerDepartment = lecturer.department;
-  const lecturerFaculty = await Faculty.findByPk(lecturerDepartment.facultyId);
+  const department = await Department.findByPk(lecturer.departmentId);
+  const faculty = await Faculty.findByPk(department.facultyId);
   const courseList = await lecturer.getCourses();
   const studentList = await lecturer.getStudents();
   //const url = lecturer.url;
-  lecturerLite.lecturerCode =
-    "0" + lecturerFaculty.id + lecturerDepartment.id + id;
+  lecturerLite.lecturerCode = "0" + faculty.id + department.id + id;
   res.render("lecturer_page", {
     title: "lecturer Display Page",
     lecturer: lecturerLite,
-    faculty: lecturerFaculty,
-    department: lecturerDepartment,
+    faculty,
+    department,
     courseList,
     studentList,
     url,
@@ -405,72 +404,72 @@ exports.lecturer_update_addCourse_form = asyncHandler(
     const lecturer = await Lecturer.findByPk(lecturerId, {
       include: [Department],
     });
-
     let maximumCourseLoad;
 
-    switch (+lecturer.level) {
-      case 1:
-        maximumCourseLoad = 4;
-        break;
-
-      case 2:
-        maximumCourseLoad = 3;
-        break;
-
-      case 3:
-        maximumCourseLoad = 1;
-        break;
-
-      case 4:
-
-      case 5:
-        res.render("message_report", {
-          message:
-            "Course can not be assigned to level 4 and level 5 lecturers ",
-          url: lecturer.url + "/update",
-        });
-        return;
-      default:
-        res.render("message_report", {
-          message: "A valid level has not been choosen for this lecturer",
-          url: lecturer.url + "/update",
-        });
-        return;
-    }
     //Check to see if the lecturer has reached his/her course limit
     const courseCount = await lecturer.countCourses();
-    if (courseCount > maximumCourseLoad - 1) {
-      res.render("maximum_form", {
-        model: "lecturer",
-        associate: "course",
-        count: 2,
-        url: lecturer.url + "/update",
-      });
-      return;
-    }
 
     if (req.method === "GET") {
+      switch (+lecturer.level) {
+        case 1:
+          maximumCourseLoad = 4;
+          break;
+
+        case 2:
+          maximumCourseLoad = 3;
+          break;
+
+        case 3:
+          maximumCourseLoad = 1;
+          break;
+
+        case 4:
+
+        case 5:
+          res.render("message_report", {
+            message:
+              "Course can not be assigned to level 4 and level 5 lecturers ",
+            url: lecturer.url + "/update",
+          });
+          return;
+        default:
+          res.render("message_report", {
+            message:
+              "A valid level has not been choosen for this lecturer, Assign a level to this lecturer and continue",
+            url: lecturer.url + "/update",
+          });
+          return;
+      }
+      if (courseCount > maximumCourseLoad - 1) {
+        res.render("maximum_form", {
+          model: "lecturer",
+          associate: "course",
+          count: maximumCourseLoad,
+          url: lecturer.url + "/update",
+        });
+        return;
+      }
       // Get all the lecturers in the department where the lecturer belongs
       let lecturerList = await Lecturer.findAll({
         where: {
           departmentId: lecturer.departmentId,
         },
       });
-      let courseList = [];
       //Remove this lecturer from the list of lecturers from the lecturerList
       //to avoid returning the course already assigned to this lecturer as part
       // of the courses available for assignment.
       lecturerList = lecturerList.filter((lec) => {
         return lecturer.id == lec.id ? false : true;
       });
+      let courseList = [];
       // From the list of the lecturers, get all the  courses under the department
       for await (const lecturer of lecturerList) {
         const courses = await lecturer.getCourses();
         courseList.push(courses);
       }
-
       courseList = courseList.flat();
-      //remove dublicate that could occur due to defferent lecturers
+
+      //remove dublicate that could occur due to different lecturers
       // having the same course
 
       courseList = new Set(courseList);
@@ -479,10 +478,17 @@ exports.lecturer_update_addCourse_form = asyncHandler(
       //filter the courseLIst and remove courses that has been assigned upto 2 lecturers
       const availableCourses = [];
       for await (const course of courseList) {
-        let courseList = await course.getLecturers();
-        if (courseList.length < 2) {
+        let count = await course.countLecturers();
+        if (count < 2) {
           availableCourses.push(course);
         }
+      }
+      if (availableCourses.length < 1) {
+        res.render("message_report", {
+          message: "No course available currently to assign to this lecturer",
+          url: lecturer.url + "/update",
+        });
+        return;
       }
       res.render("update_add_remove", {
         modelList: availableCourses,
@@ -492,23 +498,118 @@ exports.lecturer_update_addCourse_form = asyncHandler(
         maximumCount: maximumCourseLoad - courseCount,
       });
     } else if (req.method === "POST") {
-      let lecturerCourseIds = req.body.modelIds;
-      //convert lecturerCourseIds to array if it is a string
-      if (!Array.isArray(lecturerCourseIds)) {
-        lecturerCourseIds = [lecturerCourseIds];
+      let courseIds = req.body.modelIds;
+      //check to see  that atleast a course was selected
+      if (!courseIds) {
+        res.render("message_report", {
+          message: "No course has lecturer",
+          url: lecturer.url + "/update",
+        });
+        return;
+        res.redirect(lecturer.url + "/update");
+        return;
+      }
+      //convert courseIds to array if it is a string
+      if (!Array.isArray(courseIds)) {
+        courseIds = [courseIds];
       }
 
       const availableCourseList = await get_Obj_array_from_id_array(
-        lecturerCourseIds,
+        courseIds,
         Course
       );
       await lecturer.addCourses(availableCourseList);
 
-      res.redirect(lecturer.url + "/update");
+      res.redirect(lecturer.url + "/display");
     }
   }
 );
 
+exports.lecturer_update_removeCourse_form = asyncHandler(
+  async (req, res, next) => {
+    const lecturerId = req.params.id;
+    const lecturer = await Lecturer.findByPk(lecturerId);
+
+    if (req.method == "GET") {
+      let courseList = await lecturer.getCourses();
+
+      if (courseList.length < 1) {
+        res.render("message_report", {
+          message: "No course has been assigned to this lecturer",
+          url: lecturer.url + "update_removeCourse",
+        });
+        return;
+      } else {
+        //Add "deactivate" flag to courses whose only lecturer reference is only this current lecturer
+        const arr = [];
+        for await (const course of courseList) {
+          const count = await course.countLecturers();
+          if (count == 1) {
+            continue;
+          }
+          arr.push(course);
+        }
+        courseList = arr;
+      }
+
+      res.render("update_add_remove", {
+        modelList: courseList,
+        parentModel: { name: "lecturer", url: lecturer.url },
+        associateModel: "course",
+        actionType: "remove",
+      });
+    } else if (req.method == "POST") {
+      const courseId = req.body.modelIds;
+      if (!courseId) {
+        res.render("message_report", {
+          message:
+            "No course selected for removal, select atleast a course to proceed",
+          url: lecturer.url + "update_removeCourse",
+        });
+        return;
+      }
+      const course = await Course.findByPk(courseId);
+      await lecturer.removeCourse(course);
+
+      res.redirect(lecturer.url + "/display");
+    }
+  }
+);
+exports.lecturer_update_add_changeLevel_form = asyncHandler(
+  async (req, res, next) => {
+    const lecturer = await Lecturer.findByPk(req.params.id);
+    const levelList = ["1", "2", "3", "4", "5"];
+    if (req.method == "GET") {
+      res.render("update_add_change", {
+        levelList,
+        presentLevel: lecturer.level,
+      });
+    } else if (req.method == "POST") {
+      const level = req.body.level;
+
+      const {
+        firstName,
+        lastName,
+        dateOfEmployment,
+        dateOfBirth,
+        gender,
+        id,
+        url,
+      } = lecturer;
+      const lecturerLite = {
+        firstName,
+        lastName,
+        dateOfEmployment,
+        dateOfBirth,
+        gender,
+        level,
+      };
+
+      await lecturer.update(lecturerLite);
+      res.redirect(lecturer.url + "/display");
+    }
+  }
+);
 exports.lecturer_delete_form = asyncHandler(async (req, res, next) => {
   const lecturer = await Lecturer.findByPk(req.params.id);
   if (req.method === "GET") {

@@ -29,13 +29,7 @@ block homeMain
             input(type="text", name="creditUnit",required,
                 value= course && course.creditUnit,id="creditUnit"
                 placeholder="--Credit unit--")
-
-        .lecturerIdBlock  
-            label(for="course_lecturerId") Selected lecturer
-            input(type="text", hidden, name="lecturerId",
-                required,id="course_lecturerId",value= lecturer.id,) 
-            span.selected  : #{lecturer.fullName}
-                        
+                 
     button(form='form')   Update
     button
         a(href= '/course')  Cancel Update

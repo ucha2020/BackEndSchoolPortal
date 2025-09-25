@@ -23,9 +23,7 @@ exports.courses_page = asyncHandler(async (req, res, next) => {
 });
 
 exports.course_page = asyncHandler(async (req, res, next) => {
-  const course = await Course.findByPk(req.params.id, {
-    include: Lecturer,
-  });
+  const course = await Course.findByPk(req.params.id);
 
   const { name, title, level, creditUnit, id, url } = course;
   const courseRaw = {
@@ -85,7 +83,7 @@ exports.course_creation_form = asyncHandler(async (req, res, next) => {
       });
       return;
     } else if (!lecturerList[0]) {
-      //Atleast a department and faculty exists and no lecturer is in existence at at this stage
+      //Atleast a department and faculty exists but no lecturer exists at this stage
       const nonExistingAncestralList = {
         parent: "lecturer",
         child: "course",
@@ -183,8 +181,8 @@ exports.course_creation_form = asyncHandler(async (req, res, next) => {
         // Check for an atleast a lectuerer with no course or not greater than two courses assigned to him\her
         const availableLecturers = [];
         for await (const lecturer of selectedDepartmentLecturers) {
-          const obj = await lecturer.getCourses();
-          if (obj.length < 2) availableLecturers.push(lecturer);
+          const count = await lecturer.countCourses();
+          if (count < 2) availableLecturers.push(lecturer);
         }
 
         if (availableLecturers.length > 0) {
@@ -336,24 +334,19 @@ exports.course_update_formData_processor = [
 ];
 
 exports.course_update_form = asyncHandler(async (req, res, next) => {
-  let lecturer;
+  let lecturers;
   let course;
 
   if (req.method === "GET") {
-    course = await Course.findByPk(req.params.id, {
-      include: [Lecturer],
-    });
-    lecturer = course.lecturer;
+    course = await Course.findByPk(req.params.id);
   } else if (req.method === "POST") {
     //Create a courseInstance with the form data
     course = courseInstance(req.body);
     course.id = req.params.id;
-    lecturer = await Lecturer.findByPk(course.lecturerId);
   }
   res.render("course_update_form", {
     title: "course update form",
     course,
-    lecturer,
   });
 });
 

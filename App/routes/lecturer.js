@@ -23,9 +23,29 @@ route.get("/:id/update_addCourse", lecturer.lecturer_update_addCourse_form);
 
 route.post("/:id/update_addCourse", lecturer.lecturer_update_addCourse_form);
 
+route.get(
+  "/:id/update_removeCourse",
+  lecturer.lecturer_update_removeCourse_form
+);
+
+route.post(
+  "/:id/update_removeCourse",
+  lecturer.lecturer_update_removeCourse_form
+);
+
 route.get("/:id/update_addStudent", lecturer.lecturer_update_addStudent_form);
 
 route.post("/:id/update_addStudent", lecturer.lecturer_update_addStudent_form);
+
+route.get(
+  "/:id/update_add_changeLevel",
+  lecturer.lecturer_update_add_changeLevel_form
+);
+
+route.post(
+  "/:id/update_add_changeLevel",
+  lecturer.lecturer_update_add_changeLevel_form
+);
 
 route.get(
   "/:id/update_removeStudent",
