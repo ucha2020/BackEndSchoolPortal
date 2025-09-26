@@ -238,6 +238,7 @@ exports.lecturer_update_form = asyncHandler(async (req, res, next) => {
     title: "lecturer update form",
     lecturer,
     department,
+    level: lecturer.level,
   });
 });
 
@@ -297,22 +298,31 @@ exports.lecturer_update_formData_processor = [
 exports.lecturer_update_addStudent_form = asyncHandler(
   async (req, res, next) => {
     const lecturer = await Lecturer.findByPk(req.params.id);
-    if (lecturer.level > 4) {
+    if (lecturer.level > 3) {
       res.render("message_report", {
         message: `Students can not be assigned to this lecturer, 
-                    becausea this lecturers is above level 4  `,
+                    becausea this lecturers is above level 3  `,
         url: lecturer.url + "/update",
       });
       return;
     }
     const studentCount = await lecturer.countStudents();
     if (req.method == "GET") {
-      // Making sure that the lecturer has need exceeded
-      // the maximum of the student that can be assigned to him/her
-      if (studentCount > 4) {
+      // Making sure that the lecturer has not reached
+      // the maximum number of student that can be assigned to him/her
+      const courseLimit =
+        lecturer.level == 1
+          ? 2
+          : lecturer.level == 2
+          ? 4
+          : lecturer.level == 3
+          ? 3
+          : "";
+
+      if (studentCount >= courseLimit) {
         res.render("message_report", {
           message: "Maximum studentload reached for this lecturer",
-          url: lecturer.url + "/update",
+          url: lecturer.url + "/update_addStudent",
         });
         return;
       }
@@ -320,23 +330,27 @@ exports.lecturer_update_addStudent_form = asyncHandler(
       // Get all the students in the department with no course adviser
       const studentList = await Student.findAll({
         where: {
-          courseAdvicerId: null,
+          courseAdviserId: null,
         },
       });
 
       res.render("update_add_remove", {
         modelList: studentList,
         nameType: "fullName",
-        maximumCount: 5 - studentCount,
+        maximumCount: courseLimit - studentCount,
         parentModel: { name: "lecturer", url: lecturer.url },
         associateModel: "student",
         actionType: "add",
       });
     } else if (req.method === "POST") {
       let studentIds = req.body.modelIds;
+      const maximumCount = req.body.maximumCount;
       //check to see if no student has been selected
       if (!studentIds) {
-        res.redirect(lecturer.url + "/update");
+        res.render("message_report", {
+          message: "You have not selected any student",
+          url: lecturer.url + "/update_addStudent",
+        });
         return;
       }
       // if studentIds is not an array, convert to array
@@ -346,9 +360,10 @@ exports.lecturer_update_addStudent_form = asyncHandler(
       }
 
       // Check to see if the number of selected students is more than the allowed student per lecturer
-      if (studentIds.length + studentCount > 5) {
+      if (studentIds.length + studentCount > maximumCount) {
         res.send(
-          `You are currently not allowed to select more than ${5 - studentCount}
+          `You are currently not allowed to select more than ${maximumCount}
+           student(s)
         <button class= add> <a href="">Ok</a></button> `
         );
         return;
@@ -370,9 +385,9 @@ exports.lecturer_update_removeStudent_form = asyncHandler(
 
     if (req.method === "GET") {
       // get all the student under this lecturer if any
-      const lecturerStudentList = await lecturer.getStudents();
+      const studentList = await lecturer.getStudents();
       res.render("update_add_remove", {
-        modelList: lecturerStudentList,
+        modelList: studentList,
         nameType: "fullName",
         parentModel: { name: "lecturer", url: lecturer.url },
         associateModel: "student",
@@ -585,28 +600,77 @@ exports.lecturer_update_add_changeLevel_form = asyncHandler(
         presentLevel: lecturer.level,
       });
     } else if (req.method == "POST") {
+      const courseCount = await lecturer.countCourses();
+      const studentCount = await lecturer.countStudents();
+      let maximumCourseLoad;
+      let maximumStudentLoad;
       const level = req.body.level;
 
-      const {
-        firstName,
-        lastName,
-        dateOfEmployment,
-        dateOfBirth,
-        gender,
-        id,
-        url,
-      } = lecturer;
-      const lecturerLite = {
-        firstName,
-        lastName,
-        dateOfEmployment,
-        dateOfBirth,
-        gender,
-        level,
-      };
+      switch (+level) {
+        case 1:
+          maximumCourseLoad = 4;
+          maximumStudentLoad = 2;
+          break;
 
-      await lecturer.update(lecturerLite);
-      res.redirect(lecturer.url + "/display");
+        case 2:
+          maximumCourseLoad = 3;
+          maximumStudentLoad = 4;
+          break;
+
+        case 3:
+          maximumCourseLoad = 1;
+          maximumStudentLoad = 3;
+          break;
+
+        case 4:
+
+        case 5:
+          maximumCourseLoad = 0;
+          maximumStudentLoad = 0;
+          break;
+      }
+      if (courseCount > maximumCourseLoad) {
+        res.render("message_report", {
+          message: `You will need to remove atleast ${
+            courseCount - maximumCourseLoad
+          } course(s) from this lecturer before upgrading from level ${
+            lecturer.level
+          } to level ${level}`,
+          url: lecturer.url + "/update_add_changeLevel",
+        });
+        return;
+      } else if (studentCount > maximumStudentLoad) {
+        res.render("message_report", {
+          message: `You will need to remove atleast ${
+            studentCount - maximumStudentLoad
+          } student(s) from this lecturer before changing from level ${
+            lecturer.level
+          } to level ${level}`,
+          url: lecturer.url + "/update_add_changeLevel",
+        });
+        return;
+      } else {
+        const {
+          firstName,
+          lastName,
+          dateOfEmployment,
+          dateOfBirth,
+          gender,
+          id,
+          url,
+        } = lecturer;
+        const lecturerLite = {
+          firstName,
+          lastName,
+          dateOfEmployment,
+          dateOfBirth,
+          gender,
+          level,
+        };
+
+        await lecturer.update(lecturerLite);
+        res.redirect(lecturer.url + "/display");
+      }
     }
   }
 );

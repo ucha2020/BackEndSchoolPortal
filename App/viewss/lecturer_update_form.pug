@@ -33,14 +33,21 @@ block homeMain
             input(type="text", name="dateOfEmployment",placeholder="dateOfEmployment",
             id="lecturer_dateOfEmployment",value= lecturer && lecturer.dateOfEmployment)
 
+        .levelBlock  
+            label(for="lecturer_level") Lecturer's level
+            input(type="text", hidden, name="departmentId",
+               id="lecturer_level",value= level,) 
+            span.selected   #{level}
+    
+        
         .departmentIdBlock  
             label(for="lecturer_departmentId") Selected department
             input(type="text", hidden, name="departmentId",
-                required,id="lecturer_departmentId",value= department.id,) 
-            span.selected  : #{department.name}
+                id="lecturer_departmentId",value= department.id,) 
+            span.selected   #{department.name}
     
     .add 
-        a(href= lecturer.url + "/update_add_changeLevel")  Add/Change level
+        a(href= lecturer.url + "/update_add_changeLevel")  Change level
     
     .add 
         a(href= lecturer.url + "/update_addCourse")  Add Course

@@ -121,15 +121,15 @@ exports.course_creation_form = asyncHandler(async (req, res, next) => {
     if (Array.isArray(course.greatGrandParent)) {
       // Only faculty has been selected for the course creation at this moment
       const selectedFacultyId = course.greatGrandParent[0];
-      const selectedFacultyDepartments = await Department.findAll({
+      const departmentList = await Department.findAll({
         where: {
           facultyId: selectedFacultyId,
         },
       });
 
-      if (selectedFacultyDepartments.length < 1) {
+      if (departmentList.length < 1) {
         // No department exist in the chosen faculty.
-        //therefore, department should be created in the chisen faculty
+        //therefore, department should be created in the chosen faculty
 
         res.render("non_existing", {
           child: "course",
@@ -150,24 +150,24 @@ exports.course_creation_form = asyncHandler(async (req, res, next) => {
         };
         res.render("select_ancestry_form", {
           title: "select a department for this course",
-          grandParentList: selectedFacultyDepartments,
+          grandParentList: departmentList,
           ...ancestryStatus,
         });
         return;
       }
     } else if (Array.isArray(course.grandParent)) {
-      // Both faculty and depatment have been selected
+      // Both faculty and department have been selected
       // for the course creation at this moment
 
       const selectedDepartmentId = course.grandParent[0];
-      const selectedDepartmentLecturers = await Lecturer.findAll({
+      let lecturerList = await Lecturer.findAll({
         where: {
           departmentId: selectedDepartmentId,
         },
       });
-      if (selectedDepartmentLecturers.length < 1) {
+      if (lecturerList.length < 1) {
         // No lecturer exist in the chosen department.
-        //therefore, lecturer should be created in the chisen department
+        //therefore, lecturer should be created in the chosen department
         res.render("non_existing", {
           child: "course",
           grandParent: "department",
@@ -177,12 +177,26 @@ exports.course_creation_form = asyncHandler(async (req, res, next) => {
         return;
       } else {
         // Atleast a lecturer exist in the chosen department.
-
-        // Check for an atleast a lectuerer with no course or not greater than two courses assigned to him\her
+        //Remove lecturers above level "3" from the list
+        lecturerList = lecturerList.filter((lecturer) => {
+          return lecturer.level <= 3;
+        });
+        //Remove any lecturer who has reached his/her course assignment limit based on level
         const availableLecturers = [];
-        for await (const lecturer of selectedDepartmentLecturers) {
-          const count = await lecturer.countCourses();
-          if (count < 2) availableLecturers.push(lecturer);
+        for await (const lecturer of lecturerList) {
+          const courseLimit =
+            lecturer.level == 1
+              ? 4
+              : lecturer.level == 2
+              ? 3
+              : lecturer.level == 3
+              ? 1
+              : "";
+
+          courseCount = await lecturer.countCourses();
+          if (courseCount < courseLimit) {
+            availableLecturers.push(lecturer);
+          }
         }
 
         if (availableLecturers.length > 0) {
@@ -334,9 +348,7 @@ exports.course_update_formData_processor = [
 ];
 
 exports.course_update_form = asyncHandler(async (req, res, next) => {
-  let lecturers;
   let course;
-
   if (req.method === "GET") {
     course = await Course.findByPk(req.params.id);
   } else if (req.method === "POST") {
