@@ -5,13 +5,9 @@ html(lang='en')
     meta(charset='utf-8')
     meta(name='viewport', content='width=device-width, initial-scale=1')
     link(rel="stylesheet", href="/stylesheets/style.css")
-    script #{alreadyExisted}&& alert(`#{modelInstance && modelInstance.modelName} with the same name already exists in the database`);   
   body
-    div(class='home-block')
-      include ./includes/header
-  
-      main(class='main')
+    include ./includes/header
+    main(class='main')
         block homeMain
-      
-      include ./includes/footer
+    include ./includes/footer
         

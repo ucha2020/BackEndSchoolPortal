@@ -11,6 +11,7 @@ const asyncHandler = require("express-async-handler");
 const {
   checkAssociatedModelInstances,
   get_Obj_array_from_id_array,
+  getRouteLink,
 } = require("../resources/libary");
 
 exports.lecturer_page = asyncHandler(async (req, res, next) => {
@@ -41,6 +42,8 @@ exports.lecturer_page = asyncHandler(async (req, res, next) => {
   const studentList = await lecturer.getStudents();
   //const url = lecturer.url;
   lecturerLite.lecturerCode = "0" + faculty.id + department.id + id;
+  const routeLinks = getRouteLink(req.originalUrl, "lecturer");
+
   res.render("lecturer_page", {
     title: "lecturer Display Page",
     lecturer: lecturerLite,
@@ -49,14 +52,17 @@ exports.lecturer_page = asyncHandler(async (req, res, next) => {
     courseList,
     studentList,
     url,
+    routeLinks,
   });
 });
 
 exports.lecturers_page = asyncHandler(async (req, res, next) => {
   const lecturerList = await Lecturer.findAll();
+  const routeLinks = getRouteLink(req.originalUrl, "lecturer");
   res.render("lecturers_page", {
     title: "lecturers Display Page",
     lecturerList,
+    routeLinks,
   });
 });
 
@@ -113,10 +119,11 @@ exports.lecturer_creation_form = asyncHandler(async (req, res, next) => {
     const departmentId = req.body.departmentId;
     if (departmentId) {
       const department = await Department.findByPk(departmentId);
-
+      const routeLinks = getRouteLink(req.originalUrl);
       res.render("lecturer_creation_form", {
         title: "lecturer creation form",
         department,
+        routeLinks,
       });
       return;
     }
@@ -233,12 +240,13 @@ exports.lecturer_update_form = asyncHandler(async (req, res, next) => {
     lecturer.id = req.params.id;
     department = await Department.findByPk(lecturer.departmentId);
   }
-
+  const routeLinks = getRouteLink(req.originalUrl, "lecturer");
   res.render("lecturer_update_form", {
     title: "lecturer update form",
     lecturer,
     department,
     level: lecturer.level,
+    routeLinks,
   });
 });
 
@@ -333,7 +341,7 @@ exports.lecturer_update_addStudent_form = asyncHandler(
           courseAdviserId: null,
         },
       });
-
+      const routeLinks = getRouteLink(req.originalUrl, "lecturer");
       res.render("update_add_remove", {
         modelList: studentList,
         nameType: "fullName",
@@ -341,6 +349,7 @@ exports.lecturer_update_addStudent_form = asyncHandler(
         parentModel: { name: "lecturer", url: lecturer.url },
         associateModel: "student",
         actionType: "add",
+        routeLinks,
       });
     } else if (req.method === "POST") {
       let studentIds = req.body.modelIds;
@@ -386,12 +395,14 @@ exports.lecturer_update_removeStudent_form = asyncHandler(
     if (req.method === "GET") {
       // get all the student under this lecturer if any
       const studentList = await lecturer.getStudents();
+      const routeLinks = getRouteLink(req.originalUrl, "lecturer");
       res.render("update_add_remove", {
         modelList: studentList,
         nameType: "fullName",
         parentModel: { name: "lecturer", url: lecturer.url },
         associateModel: "student",
         actionType: "remove",
+        routeLinks,
       });
     } else if (req.method === "POST") {
       let studentIds = req.body.modelIds;
@@ -505,12 +516,14 @@ exports.lecturer_update_addCourse_form = asyncHandler(
         });
         return;
       }
+      const routeLinks = getRouteLink(req.originalUrl, "lecturer");
       res.render("update_add_remove", {
         modelList: availableCourses,
         parentModel: { name: "lecturer", url: lecturer.url },
         associateModel: "course",
         actionType: "add",
         maximumCount: maximumCourseLoad - courseCount,
+        routeLinks,
       });
     } else if (req.method === "POST") {
       let courseIds = req.body.modelIds;
@@ -567,11 +580,13 @@ exports.lecturer_update_removeCourse_form = asyncHandler(
         courseList = arr;
       }
 
+      const routeLinks = getRouteLink(req.originalUrl, "lecturer");
       res.render("update_add_remove", {
         modelList: courseList,
         parentModel: { name: "lecturer", url: lecturer.url },
         associateModel: "course",
         actionType: "remove",
+        routeLinks,
       });
     } else if (req.method == "POST") {
       const courseId = req.body.modelIds;
@@ -595,9 +610,11 @@ exports.lecturer_update_add_changeLevel_form = asyncHandler(
     const lecturer = await Lecturer.findByPk(req.params.id);
     const levelList = ["1", "2", "3", "4", "5"];
     if (req.method == "GET") {
+      const routeLinks = getRouteLink(req.originalUrl);
       res.render("update_add_change", {
         levelList,
         presentLevel: lecturer.level,
+        routeLinks,
       });
     } else if (req.method == "POST") {
       const courseCount = await lecturer.countCourses();

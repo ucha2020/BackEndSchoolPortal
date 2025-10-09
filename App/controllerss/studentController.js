@@ -11,6 +11,7 @@ const asyncHandler = require("express-async-handler");
 const {
   checkAssociatedModelInstances,
   get_Obj_array_from_id_array,
+  getRouteLink,
 } = require("../resources/libary");
 const { ur } = require("@faker-js/faker");
 const { where, Op } = require("sequelize");
@@ -41,6 +42,7 @@ exports.student_page = asyncHandler(async (req, res, next) => {
   const courseList = await student.courses;
   const url = student.url;
   studentRaw.regNo = "0" + faculty.id + "0" + department.id + student.id;
+  const routeLinks = getRouteLink(req.originalUrl, "student");
   res.render("student_page", {
     title: "student Display Page",
     student: studentRaw,
@@ -49,15 +51,18 @@ exports.student_page = asyncHandler(async (req, res, next) => {
     courseAdviser,
     courses: courseList,
     url,
+    routeLinks,
   });
 });
 
 exports.students_page = asyncHandler(async (req, res, next) => {
   const studentList = await Student.findAll();
+  const routeLinks = getRouteLink(req.originalUrl, "student");
 
   res.render("students_page", {
     title: "students Display Page",
     studentList,
+    routeLinks,
   });
 });
 

@@ -2,7 +2,7 @@ extends homeLayout
 block homeMain 
     - const name =  nameType || "name"
     form( method="post")
-        fieldset
+        fieldset.temporal
             if modelList.length < 1
                 legend No available #{associateModel} to be #{actionType =="add" ? "added to": "remove from"} this #{parentModel.name}  
                 a(href= parentModel.url + "/update") Ok

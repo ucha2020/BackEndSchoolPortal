@@ -11,7 +11,7 @@ const Department = sequelize.define("department", {
   url: {
     type: DataTypes.VIRTUAL,
     get() {
-      return `/department/${this.id}`;
+      return `/departments/${this.id}`;
     },
   },
 });

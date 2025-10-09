@@ -3,64 +3,78 @@ block homeMain
 
     form(method ="post",id='form',action = `/lecturer/${lecturer.id}/update`)
     
-        .firstNameBlock  
-                
-            label(for="lecturer_firstName") firstName: 
-            input(type="text", name="firstName",placeholder="firstName",id="lecturer_firstName",
-                value= lecturer && lecturer.firstName)
+        section.personalInformation
+            h3 Lecture's personal information
+            .inputField                  
+                label(for="lecturer_firstName") firstName: 
+                input(type="text", name="firstName",placeholder="firstName",id="lecturer_firstName",
+                    value= lecturer && lecturer.firstName)
 
-        .lastNameBlock  
-                
-            label(for="lecturer_lastName") lastName: 
-            input(type="text", name="lastName",placeholder="lastName",id='lecturer_lastName',
-                value= lecturer && lecturer.lastName)
+            .inputField                 
+                label(for="lecturer_lastName") lastName: 
+                input(type="text", name="lastName",placeholder="lastName",id='lecturer_lastName',
+                    value= lecturer && lecturer.lastName)
 
-        .genderBlock  
-                
-            label(for="lecturer_gender")  gender: 
-            input(type="text", name="gender",placeholder=" gender",id="lecturer_gender",
-                value= lecturer && lecturer.gender)
+            .inputField                  
+                label(for="lecturer_gender")  gender: 
+                input(type="text", name="gender",placeholder=" gender",id="lecturer_gender",
+                    list="gender_list",value= lecturer && lecturer.gender )
 
-        .nameBlock  
-                
-            label(for="lecturer_dateOfBirth")  dateOfBirth: 
-            input(type="text", name="dateOfBirth",placeholder="dateOfBirth",id="lecturer_dateOfBirth",
-                value= lecturer && lecturer.dateOfBirth)
+            .inputField                  
+                label(for="lecturer_dateOfBirth")  dateOfBirth: 
+                input(type="date", name="dateOfBirth",placeholder="dateOfBirth",id="lecturer_dateOfBirth",
+                    value= lecturer && lecturer.dateOfBirth)
+       
+        section.employmentInformation
+            h3 Employment details
+            .inputField                  
+                label(for="lecturer_dateOfEmployment") dateOfEmployment: 
+                input(type="date", name="dateOfEmployment",placeholder="dateOfEmployment",
+                    id="lecturer_dateOfEmployment",value= lecturer && lecturer.dateOfEmployment)
+            .inputField 
+                label(for="lecturer_level") Lecturer's level
+                input(type="text", hidden, name="departmentId",
+                    id="lecturer_level",value= level,) 
+                span.selected   #{level}
+            .inputField 
+                label(for="lecturer_departmentId") Selected department
+                input(type="text", hidden, name="departmentId",
+                    id="lecturer_departmentId",value= department.id,) 
+                span.selected   #{department.name}
 
-        .dateOfEnmploymentBlock  
-                
-            label(for="lecturer_dateOfEmployment") dateOfEmployment: 
-            input(type="text", name="dateOfEmployment",placeholder="dateOfEmployment",
-            id="lecturer_dateOfEmployment",value= lecturer && lecturer.dateOfEmployment)
+        section.contactInformation 
+            h3 Contact information
+            .inputField                  
+                label(for="lecturer_tel") Mobile number: 
+                input(type="tel", name="tel",placeholder="0123456789",
+                    id="lecturer_tel",value= lecturer && lecturer.tel)
+            .inputField                  
+                label(for="lecturer_email") Mail address:
+                input(type="email", name="email",placeholder="email",
+                    id="lecturer_email",value= lecturer && lecturer.email)
+            .inputField                  
+                label(for="lecturer_address") Residential address                 
+                textarea( name="address",id="lecturer_address", rows="3",
+                    cols="30", value= lecturer && lecturer.address)
 
-        .levelBlock  
-            label(for="lecturer_level") Lecturer's level
-            input(type="text", hidden, name="departmentId",
-               id="lecturer_level",value= level,) 
-            span.selected   #{level}
-    
+    ul.btn_update
+        li
+            a(href= lecturer.url + "/update_add_changeLevel")  Change level
+        li
+            a(href= lecturer.url + "/update_addCourse")  Add Course
+        li    
+            a(href= lecturer.url + "/update_removeCourse")  Remove Course
+        li   
+            a(href=lecturer.url + "/update_addStudent")  Assign student   
+        li   
+            a(href= lecturer.url + "/update_removeStudent")  Remove student         
         
-        .departmentIdBlock  
-            label(for="lecturer_departmentId") Selected department
-            input(type="text", hidden, name="departmentId",
-                id="lecturer_departmentId",value= department.id,) 
-            span.selected   #{department.name}
+    section.btn_action
+        button(type="submit", form="form") Submit
+        button 
+            a(href= '/lecturer')  Cancel update
     
-    .add 
-        a(href= lecturer.url + "/update_add_changeLevel")  Change level
-    
-    .add 
-        a(href= lecturer.url + "/update_addCourse")  Add Course
-
-    .add 
-        a(href= lecturer.url + "/update_removeCourse")  Remove Course
-   
-    .add 
-        a(href=lecturer.url + "/update_addStudent")  Assign student   
-
-    .remove 
-        a(href= lecturer.url + "/update_removeStudent")  Remove student         
-        
-    input(type="submit", value="update",form="form")
-    button 
-        a(href= '/lecturer')  Cancel update
+    datalist(id="gender_list")
+        option(value="male")
+        option(value="female")
+        option(value="others")

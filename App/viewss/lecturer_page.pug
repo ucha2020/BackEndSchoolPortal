@@ -1,68 +1,53 @@
 extends homeLayout 
 block homeMain 
     if (lecturer)
-        .lecturerPage 
-            .mainblock
-                h2.header Header
-                .profilePicture
-                    img(src="", alt="Profile picture", sizes="200px")  
-                .card 
-                    ul
-                        each  value, name in lecturer 
-                            li 
-                                .infoUnit
-                                    p
-                                        strong.name  #{`${name}:  `}
-                                        span.value  #{value}
+        section.personalInformation
+            .profilePicture
+                img(src="", alt="Lecturer Photo", sizes="200px")  
+            
+            h3 Personal information
+            
+            ul
+                each  value, name in lecturer 
+                    li 
+                        .infoUnit                              
+                            strong.name  #{`${name}:  `}
+                            span.value  #{value}
 
-            .sideblock
-                .infoUnit
-                    p
-                        strong.name  faculty:  
-                        span.value  
-                            a(href= `${faculty.url}/display`) #{faculty.name} 
+        section.employmentInformation
+            h3 Employment information
+            .infoUnit
+                strong.name  faculty:  
+                span.value  
+                    a(href= `${faculty.url}/display`) #{faculty.name} 
+            .infoUnit
+                strong.name  Department:  
+                span.value  
+                    a(href= `${department.url}/display`) #{department.name}
+                
+            details 
+                summary Courses under this lecturer
+                ul.dropdown_menuh 
+                    each course in courseList 
+                        li
+                            a(href=`${course.url}/display`) 
+                                strong #{ course.name}
+                    else 
+                        li No course under this lecturer currently
 
-                .infoUnit
-                    p
-                        strong.name  Department:  
-                        span.value  
-                            a(href= `${department.url}/display`) #{department.name}
+            details 
+                summary Students under this lecturer
+                ul.dropdown_menuh 
+                    each student in studentList 
+                        li
+                            a(href=`${student.url}/display`) 
+                                strong #{ student.fullName}
+                    else 
+                        li No student under this lecturer currently
                 
-                .lecturerCoursesblock
-                    .dropdown
-                        a(href="#")  
-                            strong Courses  under this lecturer
-                            span &#8650
-                            span.downArrow 
-                        ul.dropdown_menu 
-                            each course in courseList 
-                                li
-                                    a(href=`${course.url}/display`) 
-                                        strong #{ course.name}
-                            else 
-                                li No student under this lecturer currently
-                
-                .lecturerStudentsblock
-                    .dropdown
-                        a(href="#")  
-                            strong   Students under this lecturer
-                            span &#8650
-                            span.downArrow 
-                        ul.dropdown_menu 
-                            each student in studentList  
-                                li
-                                    a(href=`${student.url}/display`) 
-                                        strong #{ student.fullName}
-                            else 
-                                li No student under this lecturer currently
-                
-                .contactInfoblock 
-                    h3  Lecturer contact info drop down
-                .editblock 
-                    .deleteblock 
-                        button.delete_btn
-                            a(href= `${url}/delete`) Delete lecturer                    
+        section.editblock  
+            button.delete_btn
+                a(href= `${url}/delete`) Delete lecturer                    
 
-                    .updateblock
-                        button.update_btn
-                            a(href= `${url}/update`) Update lecturer 
+            button.update_btn
+                a(href= `${url}/update`) Update lecturer 

@@ -1,17 +1,39 @@
-header.home-header 
-    h1 Who Knows University
-    ul.home-navbar  
-        li
-            a(href='/catalog') Home
-        li 
-            a(href="/course") Courses 
-        li
-            a(href='/faculty') Faculties  
-        li
-            a(href='/department') Departments
-        li
-            a(href='/lecturer') Lecturers
-        li
-            a(href='/student') Students
-        li
+header 
+    nav.home-navbar
+        div.top 
+            div.logo
+                span.logo-words
+                img(src="", alt="Univercity logo", width = 100 px)
+  
+           
+            div.search 
+                search 
+
+            div.toggle-block        
+                input(type="checkbox", id="menu-toggle")
+                label(for="menu-toggle" class ='menu-icon') &#9776 
+
+                ul.menu
+                    li 
+                        a(href="/courses") Courses 
+                    li
+                        a(href='/faculties') Faculties  
+                    li
+                        a(href='/departments') Departments
+                    li
+                        a(href='/lecturers') Lecturers
+                    li
+                        a(href='/students') Students 
+
+    nav(class = "breadcrumb", aria-label="Breadcrumb")
+        ul 
+            each  link in routeLinks
+                li 
+                    if(link.label == "Home")
+                        a(href=link.url)
+                            span.home-symbol &#8650 
+                           
+                    else
+                        a(href=link.url) #{link.label}
+                    
 hr

@@ -1,29 +1,202 @@
 /* General Reset*/
-* {
-  margin: 0;
-  padding: 0;
+
+html {
   box-sizing: border-box;
+  font-size: 16px;
+  background-color: aquamarine;
+  border: solid;
+  padding: 2px;
+  margin: 2px;
+  height: 100%S;
+}
+
+*,
+*::after,
+*::before {
+  box-sizing: inherit;
 }
 /*Body */
 body {
+  display: flex;
+  flex-direction: column;
+  text-align: center;
   font-family: Arial, Helvetica, sans-serif;
-  background-color: #f4f4f4;
+  background-color: rgb(67, 129, 110);
+  border: dashed;
+  padding: 20px;
+  border-radius: 30px;
+  position: relative;
+  height: 100%;
+}
+
+/* Header */
+.home-navbar {
+}
+.head {
+}
+.home-navbar .menu {
+  list-style-type: none;
+  padding: 0px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 0 auto;
+  flex-wrap: wrap;
+}
+
+header h1 {
+  text-align: center;
+  line-height: 100%;
+  padding: 0px;
+  margin: 0px auto;
+}
+
+.logo-words {
+}
+.logo {
+  display: inline-block;
+}
+
+.top {
+  display: flex;
+  justify-content: space-around;
+}
+
+.search {
+  display: inline-block;
+}
+
+.toggle-block {
+  display: inline-block;
+}
+
+header {
+  text-align: center;
+  position: sticky;
+  top: 0px;
+  padding: 0px;
+  background-color: bisque;
+}
+#menu-toggle {
+  display: none;
+}
+.toggle-block .menu-icon {
+  display: none;
+}
+
+.breadcrumb {
+  padding: 0 0.5em;
+}
+.breadcrumb ul {
+  display: flex;
+  flex-wrap: wrap;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  justify-content: flex-start;
+}
+
+.breadcrumb li:not(:last-child)::after {
+  display: inline-block;
+  margin: 0 0.25rem;
+  content: "\2192";
+}
+
+main {
+  text-align: left;
+}
+/* form styling?*/
+form {
+  display: inline-block;
+  padding: 1em;
+  border: 1px solid #cccccc;
+  text-align: left;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: 100%;
+}
+
+textarea {
+  overflow: auto;
+  vertical-align: top;
+}
+
+form p + p {
+  margin-top: 1m;
+  color: #1a2a3a;
+}
+
+label {
+  /* Uniform size and alignment*/
+  display: inline-block;
+  min-width: 90;
+  text-align: right;
+}
+
+input:focus,
+textarea:focus {
+  outline-style: solid;
+  outline-color: black;
+}
+textarea:focus {
+  vertical-align: top;
+}
+
+/*Links and button*/
+button a {
+  text-decoration: none;
+}
+button {
+  letter-spacing: 0.1em;
+  text-align: center;
+  line-height: 100%;
+  padding: 0.75em 1.5em;
+  border: none;
+  border-radius: calc(2.5em * 0.75);
+  cursor: pointer;
+  background-color: #aac8ff;
+}
+
+.btn_action {
+  display: flex;
+  justify-content: space-around;
+}
+
+.btn_action button {
+  background-color: #4caf50;
+  padding: 0.75em 1.5em;
+  color: white;
+  transition: box-shadow 0.3s ease, trasform 0.3s ease;
+  font-size: 1em;
+  border-bottom-left-radius: 30%;
+  border-bottom-right-radius: 30%;
+  border-top-left-radius: 30%;
+  border-top-right-radius: 30%;
+}
+.btn_action button:hover {
+  box-shadow: 0 8px 16px rgb(0, 0, 0, 0.2);
+  transform: translateY(-2px);
+}
+select {
 }
 .profilePicture {
+  flex: 1;
   width: 100px;
   height: 100px;
   border-radius: 25px;
   margin: 15px;
   background-color: aqua;
 }
-a:hover {
-  color: #00b7ff;
-}
-.mainblock {
-  flex: 1;
-  padding: 30px;
-  background-color: white;
-  overflow-y: auto;
+
+.personalInformation ul {
+  list-style-type: none;
+  padding-inline-start: 0px;
 }
 
 .infoUnit,
@@ -31,76 +204,55 @@ a:hover {
   margin-bottom: 20px;
 }
 
-ul {
-  list-style-type: none;
-  padding-left: 20px;
-}
+@media (max-width: 600px) {
+  .home-navbar .menu {
+    display: none;
+    flex-direction: column;
+    align-items: start;
+  }
 
+  .toggle-block .menu-icon {
+    display: block;
+    text-align: left;
+  }
+  .toggle-block #menu-toggle:checked + .menu-icon + .menu {
+    display: flex;
+    position: absolute;
+    top: 100%;
+    left: 0px;
+  }
+}
 .sideblock {
   padding: 8px;
   border-radius: 5px;
   transition: backgroung-color 0.5s;
 }
-
-.header {
-  text-align: center;
-}
-
 .studentPage,
 .coursePage,
 .facultyPage,
 .departmentPage,
-.lecturerPage {
+.modelPage {
   display: flex;
   height: 90vh;
+  flex-direction: column;
 }
 
-.home-navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin: 0 auto;
-}
-.home-header {
-  margin: 5px;
-  padding: 8px;
-  background-color: bisque;
-}
-header h1 {
-  text-align: center;
-}
 .card {
   border-radius: 3px;
   border-color: black;
   border-style: outset;
 }
 
-.courseStudentsblock a,
-.studentCoursesblock a,
-.facultyDepartmentsblock a,
-.departmentLecturersblock a,
-.departmentStudentsblock a,
-.lecturerCoursesblock a,
-.lecturerStudentsblock a,
-.courseLecturersblock a,
-.courseLecturersblock a {
-  color: black;
-  padding: 12px 18px;
-  text-decoration: none;
-  display: block;
-  transition: background-color 0.5s ease;
-}
-
-.courseStudentsblock li,
-.courseLecturersblock li,
-.studentCoursesblock li,
-.facultyDepartmentsblock li,
-.departmentLecturersblock li,
-.departmentStudentsblock li,
-.lecturerCoursesblock li,
-.lecturerStudentsblock li,
-.courseLecturersblock li {
-  position: relative;
+.courseStudentsblock,
+.courseLecturersblock,
+.studentCoursesblock,
+.facultyDepartmentsblock,
+.departmentLecturersblock,
+.departmentStudentsblock,
+.lecturerCoursesblock,
+.lecturerStudentsblock,
+.courseLecturersblock {
+  margin-top: 20px;
 }
 
 .dropdown_menu {
@@ -133,7 +285,7 @@ header h1 {
   display: block;
 }
 
-fieldset {
+.temporal {
   background: cyan;
   border: 5px solid #0000ff;
   padding: 5px;
@@ -141,17 +293,25 @@ fieldset {
   max-width: fit-content;
 }
 
-legend {
+.temporal legend {
   padding: 10px;
   background: blue;
   color: cyan;
 }
-strong {
-  margin: 5px;
+strong,
+span {
+  margin-left: 5px;
+}
+span {
+  display: inline-block;
+  max-height: 20px;
+  max-width: 300px;
+  overflow: auto;
 }
 
-.add a,
-.remove a {
+.btn_update {
+}
+.btn_update li a {
   text-decoration: none;
   display: inline-block;
   padding: 12px 24px;
@@ -164,8 +324,7 @@ strong {
   transition: all 0.3s ease;
   box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
 }
-.add a:hover,
-.remove a:hover {
+.btn_update a:hover {
   background-color: #0056b3;
   border-color: #0056b3;
   transform: translateY(-2px);
@@ -219,4 +378,44 @@ span[class="downArrow"] {
   background-color: #dbe7ff;
   color: #1a2a3a;
   border-color: #aac8ff;
+}
+summary {
+  padding: 2px 6px;
+  background-color: #dddddd;
+  border: none;
+  box-shadow: 3px 3px 4px black;
+  cursor: pointer;
+}
+details {
+  min-width: 200px;
+  margin-top: 1em;
+}
+details:open > summary {
+  background-color: #ccccff;
+}
+
+details > ul {
+  margin-block-start: 0px;
+  margin-block-end: 1em;
+  list-style-type: none;
+  padding-left: 1em;
+  box-shadow: 3px 3px 4px black;
+  background-color: #dddddd;
+}
+
+details > ul a {
+  color: black;
+  padding: 12px 18px;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.5s ease;
+}
+details > ul a:hover {
+  background-color: darkgrey;
+}
+
+.editblock {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1em;
 }

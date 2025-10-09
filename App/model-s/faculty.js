@@ -11,7 +11,7 @@ const Faculty = sequelize.define("faculty", {
   url: {
     type: DataTypes.VIRTUAL,
     get() {
-      return `/faculty/${this.id}`;
+      return `/faculties/${this.id}`;
     },
   },
 });

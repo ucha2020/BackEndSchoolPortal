@@ -44,7 +44,7 @@ const Student = sequelize.define("student", {
   url: {
     type: DataTypes.VIRTUAL,
     get() {
-      return `/student/${this.id}`;
+      return `/students/${this.id}`;
     },
   },
 });

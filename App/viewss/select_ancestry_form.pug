@@ -1,29 +1,28 @@
-.selectGrandParent 
-    //-
-        h2 = { 'select a ' 
-                greatGrandParent
-                ? // Is either any of the model but not department or faculty
-                    greatGrandParent.name != "school" 
-                
-                    ? //Course creation
-                        parent.selected &&  parent.name ||
-                        grandParent.selected &&  grandParent.name || 
-                        greatGrandParent.selected &&  greatGrandParent.name  
-                
-                    : //Any other model not course                 
-                        parent.selected &&  parent.name ||
-                        grandParent.selected &&  grandParent.name 
+//-
+    h2 = { 'select a ' 
+            greatGrandParent
+            ? // Is either any of the model but not department or faculty
+                greatGrandParent.name != "school" 
+            
+                ? //Course creation
+                    parent.selected &&  parent.name ||
+                    grandParent.selected &&  grandParent.name || 
+                    greatGrandParent.selected &&  greatGrandParent.name  
+            
+                : //Any other model not course                 
+                    parent.selected &&  parent.name ||
+                    grandParent.selected &&  grandParent.name 
 
-                : // Department creation
-                    parent.name
-                ' for this' child.name
-        }
-
-    h2 select a #{  greatGrandParent ? greatGrandParent.name != "school" ? parent.selected &&  parent.name || grandParent.selected &&  grandParent.name || greatGrandParent.selected &&  greatGrandParent.name  : parent.selected &&  parent.name || grandParent.selected &&  grandParent.name : parent.name}  for this #{child.name}
-  
+            : // Department creation
+                parent.name
+            ' for this' child.name
+    }
+extends homeLayout 
+block homeMain        
     form(method="post",action='/' + child.name + '/create_edit')
-        .greatGrandParentListBlock 
-            if greatGrandParentList && greatGrandParentList.length > 0
+        h2 Select a #{  greatGrandParent ? greatGrandParent.name != "school" ? parent.selected &&  parent.name || grandParent.selected &&  grandParent.name || greatGrandParent.selected &&  greatGrandParent.name  : parent.selected &&  parent.name || grandParent.selected &&  grandParent.name : parent.name}  for this #{child.name}
+        if greatGrandParentList && greatGrandParentList.length > 0
+            section.parentSelection            
                 label(for="greatGrandParent") Select a #{greatGrandParent.name}
                 select(name="greatGrandParent",required,id = "greatGrandParent") 
                     option(value="")  --Select a #{greatGrandParent.name}
@@ -31,8 +30,8 @@
                         li 
                             option(value= greatGrandParent.id) #{greatGrandParent.name}
 
-        .grandParentListBlock 
-            if grandParentList && grandParentList.length > 0
+        if grandParentList && grandParentList.length > 0
+            section.parentSelection             
                 label(for="grandParent") Select a #{grandParent.name}
                 select(name="grandParent",required,id = "grandParent") 
                     option(value="")  --Select a #{grandParent.name}
@@ -40,24 +39,22 @@
                         li 
                             option(value= grandParent.id) #{grandParent.name}
 
-        .parentListBlock 
-            if parentList && parentList.length > 0
+        if parentList && parentList.length > 0
+            section.parentSelection             
                 label(for="parent") Select a #{parent.name}
                 select(name="parent",required,id = "parent") 
                     option(value="")  --Select a #{parent.name}
                     each model in parentList 
                         li 
                             option(value= model.id) #{parent.name=="lecturer"||parent.name=="student"?model.fullName:model.name}
-      
-    
-        input(type="hidden", name="greatGrandParent",value= greatGrandParent)
-        input(type="hidden", name="grandParent",value= grandParent)
-        input(type="hidden", name="parent",value= parent)
-        input(type="hidden", name="child",value= child)
-        i
-
-        .btn
-            input(type="submit", value="submit")
+         
+        section(hidden)
+            input(type="text", name="greatGrandParent",value= greatGrandParent)
+            input(type="text", name="grandParent",value= grandParent)
+            input(type="text", name="parent",value= parent)
+            input(type="text", name="child",value= child)
+            
+        section.btn_action
+            button(type="submit") Submit
             button(type="button") 
                 a(href="/") Cancel 
-    
