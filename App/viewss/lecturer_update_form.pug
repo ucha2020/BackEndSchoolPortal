@@ -70,9 +70,9 @@ block homeMain
             a(href= lecturer.url + "/update_removeStudent")  Remove student         
         
     section.btn_action
-        button(type="submit", form="form") Submit
-        button 
-            a(href= '/lecturer')  Cancel update
+        button.btn-only(type="submit", form="form") Submit
+        a.a-btn(href= '/lecturer')
+            button Cancel update
     
     datalist(id="gender_list")
         option(value="male")

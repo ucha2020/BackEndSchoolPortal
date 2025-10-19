@@ -17,17 +17,17 @@ block homeMain
         section.employmentInformation
             h3 Employment information
             .infoUnit
-                strong.name  faculty:  
-                span.value  
-                    a(href= `${faculty.url}/display`) #{faculty.name} 
+                strong.name  faculty:   
+                a(href= `${faculty.url}/display`) 
+                    span.value #{faculty.name} 
             .infoUnit
-                strong.name  Department:  
-                span.value  
-                    a(href= `${department.url}/display`) #{department.name}
+                strong.name  Department:    
+                a(href= `${department.url}/display`) 
+                    span.value #{department.name}
                 
-            details 
+            details(name='detail') 
                 summary Courses under this lecturer
-                ul.dropdown_menuh 
+                ul 
                     each course in courseList 
                         li
                             a(href=`${course.url}/display`) 
@@ -35,9 +35,9 @@ block homeMain
                     else 
                         li No course under this lecturer currently
 
-            details 
+            details(name='detail') 
                 summary Students under this lecturer
-                ul.dropdown_menuh 
+                ul
                     each student in studentList 
                         li
                             a(href=`${student.url}/display`) 
@@ -46,8 +46,8 @@ block homeMain
                         li No student under this lecturer currently
                 
         section.editblock  
-            button.delete_btn
-                a(href= `${url}/delete`) Delete lecturer                    
-
-            button.update_btn
-                a(href= `${url}/update`) Update lecturer 
+            a.a-btn(href= `${url}/delete`) 
+                button.delete_btn Delete lecturer
+                                    
+            a.a-btn(href= `${url}/update`)
+                button.update_btn Update lecturer 

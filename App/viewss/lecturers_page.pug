@@ -7,13 +7,12 @@ block homeMain
                     each lecturer in lecturerList 
                         .lecturerInstance
                             li
-                                button(type="button") 
-                                    a(href= `${lecturer.url}/display`) #{lecturer.fullName}
+                                a(href= `${lecturer.url}/display`) #{lecturer.fullName}
             label(for="name") Create a lecturer: 
-                button(type="button") 
-                    a(href="/lecturer/create") Create A lecturer
+                a(href="/lecturer/create")
+                    button(type="button") Create A lecturer
         else
             p No lecturer to select from  
-            a(href="/lecturer/create", name='lecturerCreation') 
+            a(href="/lecturer/create", name='lecturerCreation',class="a-btn") 
                 button(type="button") Create A lecturer
                

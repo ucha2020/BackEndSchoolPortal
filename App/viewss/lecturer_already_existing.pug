@@ -43,6 +43,6 @@ block homeMain
                 required,id="lecturer_departmentId",value= department.id,) 
             span.selected  : #{department.name}
 
-    button(form='form')  continue with lecturer #{lecturer.option == 'create'? "creation": "update"}
+    button.btn-only(form='form')  continue with lecturer #{lecturer.option == 'create'? "creation": "update"}
     button 
-        a(href= '/lecturer')  Cancil lecturer #{lecturer.option == 'create'? "creation": "update"}
+        a.a-btn(href= '/lecturer')  Cancil lecturer #{lecturer.option == 'create'? "creation": "update"}

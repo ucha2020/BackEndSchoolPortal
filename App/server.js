@@ -19,3 +19,5 @@ const PORT = process.env.PORT || 3000;
     console.error("Error connecting to the database", error);
   }
 })();
+//https://my.mts-link.ru/j/141907413/OPENDOORS2025
+//Access code: 951753

@@ -1,13 +1,19 @@
+/* Color scheme */
+
+:root {
+  --darker-base: rgb(10 10 10);
+  --dark-base: rgb(78 78 78);
+  --base-color: rgb(128 128 128);
+  --light-base: rgb(127 127 127);
+  --lighter-base: rgb(221 220 220);
+  --neutra-color: rgb(240, 240, 240);
+}
+
 /* General Reset*/
 
 html {
   box-sizing: border-box;
   font-size: 16px;
-  background-color: aquamarine;
-  border: solid;
-  padding: 2px;
-  margin: 2px;
-  height: 100%S;
 }
 
 *,
@@ -21,16 +27,17 @@ body {
   flex-direction: column;
   text-align: center;
   font-family: Arial, Helvetica, sans-serif;
-  background-color: rgb(67, 129, 110);
-  border: dashed;
+  background-color: var(--neutra-color);
+  border: 1px;
   padding: 20px;
-  border-radius: 30px;
   position: relative;
-  height: 100%;
+  color: #1a1a1a;
 }
 
 /* Header */
 .home-navbar {
+  background-color: var(--base-color);
+  padding: 0.5em 0.1em;
 }
 .head {
 }
@@ -70,12 +77,30 @@ header h1 {
   display: inline-block;
 }
 
+ul li {
+  display: inline-block;
+}
+ul a {
+  color: #0a0a0a;
+  text-decoration: none;
+}
+
+.menu {
+}
+.menu a {
+  margin-inline: 5px;
+}
+.menu li {
+}
 header {
   text-align: center;
   position: sticky;
   top: 0px;
   padding: 0px;
-  background-color: bisque;
+}
+footer {
+  background-color: var(--dark-base);
+  margin-block-start: 20px;
 }
 #menu-toggle {
   display: none;
@@ -84,8 +109,16 @@ header {
   display: none;
 }
 
-.breadcrumb {
-  padding: 0 0.5em;
+.breadcrumb span {
+  display: inline-block;
+  overflow: auto;
+}
+
+.breadcrumb li {
+  border: 1px solid rgb(240, 240, 240);
+  background-color: rgb(172, 172, 172, 0.8117);
+  transition: background-color 0.5s;
+  /*#acacaccf;*/
 }
 .breadcrumb ul {
   display: flex;
@@ -96,11 +129,26 @@ header {
   align-items: center;
   justify-content: flex-start;
 }
+.breadcrumb a {
+  display: inline-block;
+  padding: 5px;
+  padding-inline-end: 0px;
+  padding-inline-start: 3px;
+}
+.breadcrumb a:last-child {
+  padding-inline-end: 5px;
+}
 
-.breadcrumb li:not(:last-child)::after {
+.breadcrumb li:not(:last-child) a::after {
   display: inline-block;
   margin: 0 0.25rem;
   content: "\2192";
+}
+
+.breadcrumb li:first-child a {
+  display: flex;
+  align-items: center;
+  padding-block: 4px;
 }
 
 main {
@@ -110,7 +158,7 @@ main {
 form {
   display: inline-block;
   padding: 1em;
-  border: 1px solid #cccccc;
+  border: 1px solid rgb(204, 204, 204);
   text-align: left;
 }
 
@@ -142,25 +190,118 @@ label {
 input:focus,
 textarea:focus {
   outline-style: solid;
-  outline-color: black;
+  outline-color: var(--darker-base);
 }
 textarea:focus {
   vertical-align: top;
 }
 
 /*Links and button*/
+a {
+  display: inline-block;
+}
+button {
+  display: inline-block;
+}
 button a {
   text-decoration: none;
 }
+
 button {
   letter-spacing: 0.1em;
   text-align: center;
   line-height: 100%;
+  font-size: medium;
   padding: 0.75em 1.5em;
   border: none;
-  border-radius: calc(2.5em * 0.75);
+  /*border-radius: calc(2.5em * 0.75);*/
+  border-bottom-left-radius: 30%;
+  border-bottom-right-radius: 30%;
+  border-top-left-radius: 30%;
+  border-top-right-radius: 30%;
   cursor: pointer;
-  background-color: #aac8ff;
+  background-image: linear-gradient(to bottom right, #777777, #dddddd);
+  box-shadow: 1px 1px 1px black, inset 2px 3px 5px rgb(0 0 0 / 30%),
+    inset -2px -3px 5px rgb(255 255 255 / 50%);
+  transition: box-shadow 0.5s, background-image 0.5s, translateY 0.3s ease;
+}
+.a-btn:active button ul {
+  box-shadow: inset 2px 2px 1px black, inset 3px 5px rgb(0 0 0 / 30%),
+    inset -2px -3px 5px rgb(255 255 255 / 50%);
+  background-image: linear-gradient(to bottom right, #dddddd, #777777);
+}
+.btn-only:hover,
+.a-btn:hover button {
+  transform: translateY(-2px);
+  box-shadow: 2px 2px 2px;
+}
+
+@media (max-width: 600px) {
+  .home-navbar .menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0px;
+    height: 0px;
+    width: 0px;
+    align-items: start;
+    text-align: left;
+    padding: 0.6em;
+    background-color: rgb(172, 172, 172, 0);
+    overflow: hidden;
+    transition: display 1s allow-discrete, height 1s, width 1s, opacity 1s,
+      position 1s, background-color 1s;
+    opacity: 0.5;
+  }
+
+  .toggle-block .menu-icon {
+    display: block;
+    text-align: left;
+  }
+  .toggle-block #menu-toggle:checked + .menu-icon + .menu {
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    top: 100%;
+    left: 0px;
+    opacity: 1;
+    height: 15em;
+    width: 8em;
+    background-color: rgb(172, 172, 172, 0.953);
+  }
+  @starting-style {
+    .toggle-block #menu-toggle:checked + .menu-icon + .menu {
+      opacity: 0.5;
+      height: 0px;
+      width: 0px;
+    }
+  }
+  .menu li {
+    display: block;
+    width: 100%;
+  }
+  .menu li a {
+    padding: 8px 0px;
+    display: block;
+  }
+}
+
+ul a:hover,
+.breadcrumb li:hover,
+.menu li:hover {
+  background-color: #666666;
+  color: #dddcdc;
+}
+ul a:active,
+.breadcrumb li:active {
+  background-color: #acacac;
+  color: #dddcdc;
+}
+
+.editblock {
+  display: flex;
+  justify-content: space-around;
+  margin-top: 1em;
 }
 
 .btn_action {
@@ -169,20 +310,9 @@ button {
 }
 
 .btn_action button {
-  background-color: #4caf50;
-  padding: 0.75em 1.5em;
-  color: white;
-  transition: box-shadow 0.3s ease, trasform 0.3s ease;
   font-size: 1em;
-  border-bottom-left-radius: 30%;
-  border-bottom-right-radius: 30%;
-  border-top-left-radius: 30%;
-  border-top-right-radius: 30%;
 }
-.btn_action button:hover {
-  box-shadow: 0 8px 16px rgb(0, 0, 0, 0.2);
-  transform: translateY(-2px);
-}
+
 select {
 }
 .profilePicture {
@@ -191,7 +321,9 @@ select {
   height: 100px;
   border-radius: 25px;
   margin: 15px;
-  background-color: aqua;
+  background-color: rgb(119 124 166);
+  box-shadow: inset 2px -1em 3em 0px rgb(78 78 78 / 80%),
+    0 0 0 2px rgb(255 255 255), 0.3em 0.3em 0.5em;
 }
 
 .personalInformation ul {
@@ -201,27 +333,9 @@ select {
 
 .infoUnit,
 .courseStudentsblock {
-  margin-bottom: 20px;
+  margin-bottom: 10px;
 }
 
-@media (max-width: 600px) {
-  .home-navbar .menu {
-    display: none;
-    flex-direction: column;
-    align-items: start;
-  }
-
-  .toggle-block .menu-icon {
-    display: block;
-    text-align: left;
-  }
-  .toggle-block #menu-toggle:checked + .menu-icon + .menu {
-    display: flex;
-    position: absolute;
-    top: 100%;
-    left: 0px;
-  }
-}
 .sideblock {
   padding: 8px;
   border-radius: 5px;
@@ -255,36 +369,6 @@ select {
   margin-top: 20px;
 }
 
-.dropdown_menu {
-  display: none;
-
-  background-color: lightgrey;
-  min-width: 160px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 1);
-}
-.dropdown_menu li {
-  width: 100%;
-}
-
-.dropdown:hover .dropdown_menu {
-  display: block;
-}
-
-.dropdown_menu a {
-  padding: 10px 15px;
-}
-
-.dropdown_menu a:hover {
-  background-color: darkgrey;
-}
-
-.dropdown {
-  background-color: gray;
-}
-.dropdown a {
-  display: block;
-}
-
 .temporal {
   background: cyan;
   border: 5px solid #0000ff;
@@ -302,27 +386,11 @@ strong,
 span {
   margin-left: 5px;
 }
-span {
-  display: inline-block;
-  max-height: 20px;
-  max-width: 300px;
-  overflow: auto;
-}
 
 .btn_update {
+  border-radius: 3px;
 }
 .btn_update li a {
-  text-decoration: none;
-  display: inline-block;
-  padding: 12px 24px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #fff;
-  background-color: #00b7ff;
-  border-radius: 5px;
-  border: 2px solid transparent;
-  transition: all 0.3s ease;
-  box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
 }
 .btn_update a:hover {
   background-color: #0056b3;
@@ -383,7 +451,7 @@ summary {
   padding: 2px 6px;
   background-color: #dddddd;
   border: none;
-  box-shadow: 3px 3px 4px black;
+  box-shadow: 3px 3px 4px #4e4e4e;
   cursor: pointer;
 }
 details {
@@ -391,7 +459,7 @@ details {
   margin-top: 1em;
 }
 details:open > summary {
-  background-color: #ccccff;
+  background-color: #cccccc;
 }
 
 details > ul {
@@ -399,23 +467,14 @@ details > ul {
   margin-block-end: 1em;
   list-style-type: none;
   padding-left: 1em;
-  box-shadow: 3px 3px 4px black;
-  background-color: #dddddd;
+  box-shadow: 3px 3px 4px #4e4e4e;
+  background-color: #dddcdc;
 }
-
-details > ul a {
-  color: black;
-  padding: 12px 18px;
-  text-decoration: none;
+details li {
   display: block;
-  transition: background-color 0.5s ease;
+  padding: 1px;
 }
-details > ul a:hover {
-  background-color: darkgrey;
-}
-
-.editblock {
-  display: flex;
-  justify-content: space-around;
-  margin-top: 1em;
+details li a {
+  display: block;
+  padding: 0.2em;
 }
